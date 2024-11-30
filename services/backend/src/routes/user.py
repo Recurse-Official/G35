@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from src.utils import get_db_session, User, Session, User_Statistics
+from src.utils import get_db_session, User, Session, User_Statistics, Food_Orders, Available_Food
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 
@@ -84,7 +84,7 @@ def signup_user(user: UserCreate):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-@routes.get("/stats/{user_id}")
+@routes.get("/stats/")
 def get_user_stats(user_id: int):
     stats = session.query(User_Statistics).where(User_Statistics.user_id == user_id).first()
 
@@ -95,3 +95,15 @@ def get_user_id(email: str):
     user = session.query(User).where(User.email == email).first()
 
     return user
+
+@routes.get("/get/orders/")
+def get_user_orders(user_id: int):
+    orders = session.query(Food_Orders).where(Food_Orders.user_id == user_id).all()
+
+    return orders
+
+@routes.get("/get/donations/")
+def get_user_donations(user_id: int):
+    donations = session.query(Available_Food).where().all()
+
+    return donations
