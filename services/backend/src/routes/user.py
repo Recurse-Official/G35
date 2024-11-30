@@ -109,3 +109,7 @@ def get_user_donations(user_id: int):
     donations = session.query(Available_Food).where(Available_Food.user_id == user_id).all()
 
     return donations
+
+@routes.get("/leaderboard")
+def get_leaderboard():
+    # get the top 5 users with the highest total servings donated

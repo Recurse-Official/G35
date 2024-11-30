@@ -6,7 +6,8 @@ export interface FoodTileProps {
     food_title: string;
     food_available: string;
     num_servings: number;
-    created_at: string;
+    prepared_date: string;
+    expiration_date: string;
     status: string;
     distance: number;
 }
@@ -30,7 +31,8 @@ function handleFoodTileClick(id: BigInteger) {
             <div className="food-info-line">
               <span>Servings: {food.num_servings}</span>
               <span>Distance: {food.distance.toFixed(1)} km</span>
-              <span>Created: {new Date(food.created_at).toLocaleDateString()}</span>
+              <span>Prepared: {new Date(food.prepared_date).toLocaleDateString()}</span>
+              <span>Expiration: {new Date(food.expiration_date).toLocaleDateString()}</span>
               {/* <span>Status: {food.status}</span> */}
             </div>
           </div>
