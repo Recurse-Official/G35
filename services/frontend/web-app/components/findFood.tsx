@@ -1,10 +1,8 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { BACKEND_URL, RADIUS_KM } from "@/constants";
 import { FoodTileProps, FoodTileContainer } from "@/components/foodTile";
 import './styles/findpage.css';
-
 export default function FindFood() {
     // const [location, setLocation] = useState({ latitude: 0, longitude: 0 });
     const [results, setResults] = useState([] as FoodTileProps[]);

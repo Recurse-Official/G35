@@ -1,4 +1,4 @@
-import { SideBar } from "@/components/sideBar"
+// import { SideBar } from "@/components/sideBar"
 import { NavBar } from "@/components/navBar"
 import "./globals.css"
 
@@ -24,7 +24,7 @@ export default function RootLayout({
       </head>
       <body>
         <NavBar />
-        <SideBar />
+        {/* <SideBar /> */}
         <div className="content">{children}</div>
       </body>
     </html>

@@ -48,7 +48,6 @@ export default function HomePage() {
                 </table>
             </div>
             <div className="find-food-container">
-                <div className="find-food-text">Find food near you:</div>
                 <div className="find-food-component">
                     <FindFood />
                 </div>

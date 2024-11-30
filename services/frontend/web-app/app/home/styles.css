@@ -7,6 +7,7 @@
 .title {
     font-size: 32px; /* Increased font size */
     margin-bottom: 20px;
+    margin-left: 550px; /* Center the title */
     color: #2f8f46; /* Green theme */
     font-weight: bold;
     font-family: 'Arial', sans-serif;
@@ -14,8 +15,8 @@
 
 /* Leaderboard table styling */
 .table {
-    width: 60%;
-    margin: 0 auto;
+    width: 50%;
+    margin: 0 550px; /* Center the table */
     border-collapse: collapse;
     font-family: 'Arial', sans-serif;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -29,14 +30,14 @@
     background-color: #e7f5e9; /* Light green */
     color: #2f8f46; /* Green text */
     font-weight: bold;
-    text-align: left; /* Left align text in table */
+    text-align: center; /* Left align text in table */
     font-size: 18px;
 }
 
 .td {
     border: 1px solid #ddd;
     padding: 10px;
-    text-align: left; /* Left align table data */
+    text-align: center; /* Left align table data */
     color: #333;
     font-size: 16px;
 }

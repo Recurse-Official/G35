@@ -1,99 +1,88 @@
-/* Updated FoodTile.css */
-
-/* Container: Define exactly 2 columns */
+/* Container styling */
 .food-tile-container {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Always 2 columns */
-  gap: 24px; /* Space between tiles */
-  padding: 16px;
-  max-width: 1200px; /* Restrict maximum width */
-  margin: 0 auto; /* Center the container */
-  /* No background or border styles here */
+  /* padding: 20px; */
+  max-width: 800px; /* Adjusted width for two tiles per row */
+  margin: 0 550px; /* Centered layout */
+  font-family: Arial, sans-serif;
 }
 
-/* Food Tile: Adjust for uniform alignment */
+/* Title styling */
+.find-food-text {
+  font-size: 32px; /* Larger font for title */
+  font-weight: bold;
+  color: #2f8f46; /* Green theme */
+  text-align: left;
+  margin-bottom: 20px; /* Space between title and tiles */
+  display: block; /* Forces the title onto its own row */
+}
+
+/* Grid container for tiles */
+.food-tile-grid {
+  display: flex;
+  flex-wrap: wrap; /* Wrap tiles to next row */
+  gap: 20px; /* Spacing between tiles */
+  justify-content: space-around; /* Evenly spaced tiles */
+}
+
+/* Individual food tile */
 .food-tile {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  background-color: #C2FFC7; /* Primary */
-  border: 1px solid #9EDF9C; /* Secondary */
-  border-radius: 12px; /* Smooth corners */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+  flex: 1 1 calc(50% - 20px); /* Two tiles per row */
+  max-width: calc(50% - 20px); /* Ensures tiles are evenly sized */
+  background: #ffffff; /* White background */
+  border: 1px solid #e0e0e0; /* Subtle border */
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  display: flex; /* Allows horizontal alignment of content */
+  flex-direction: row; /* Horizontal layout for content and image */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* Hover Effect */
-.food-tile:hover {
   cursor: pointer;
-  transform: translateY(-5px); /* Subtle lift */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow on hover */
 }
 
-/* Text Content Section */
+.food-tile:hover {
+  transform: translateY(-5px); /* Hover lift effect */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+}
+
+/* Left section of the tile */
 .food-tile-left {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-right: 16px; /* Space between text and image */
+  padding: 12px; /* Reduced padding */
+  flex: 1; /* Allows the left section to take up more space */
+  text-align: left;
 }
 
 .food-tile-left h3 {
-  margin: 0;
-  color: #526E48; /* Darker Text */
-  font-size: 1.6rem; /* Larger font for headings */
+  font-size: 18px; /* Slightly smaller title */
   font-weight: bold;
+  color: #333; /* Darker color for the title */
+  margin-bottom: 6px;
 }
 
 .food-tile-left p {
-  margin: 0;
-  color: #62825D; /* Text */
-  font-size: 1rem;
-  line-height: 1.5;
+  font-size: 13px;
+  color: #666; /* Subtle gray for secondary text */
+  margin-bottom: 6px;
 }
 
-/* Information Line (Tags/Extra Info) */
-.food-info-line {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  color: #62825D; /* Text */
-  font-size: 0.85rem;
+.food-info-line span {
+  display: block; /* Stack information */
+  font-size: 13px;
+  color: #555; /* Subtle gray for info text */
+  margin-bottom: 4px;
 }
 
-/* Food Image Section */
+/* Right section: Image */
 .food-tile-image {
-  width: 120px;
-  height: 120px;
+  width: 150px; /* Fixed width for image */
+  height: auto; /* Maintain aspect ratio */
   object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid #9EDF9C; /* Secondary */
-  flex-shrink: 0;
+  border-left: 1px solid #e0e0e0; /* Separate image with a border */
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .food-tile-container {
-    grid-template-columns: 1fr; /* Stack tiles in a single column on smaller screens */
-    gap: 16px; /* Reduce gap for compact layout */
-  }
-
-  .food-tile {
-    flex-direction: column; /* Stack content vertically */
-    align-items: flex-start;
-    padding: 12px;
-  }
-
-  .food-tile-left {
-    margin-right: 0;
-    gap: 4px;
-  }
-
-  .food-tile-image {
-    width: 100%; /* Full width image for stacked layout */
-    height: auto;
-    margin-bottom: 8px;
-  }
+/* Loading indicator */
+.loading-indicator {
+  font-size: 18px;
+  color: #777;
+  text-align: center;
+  padding: 40px;
 }

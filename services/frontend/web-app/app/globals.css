@@ -15,11 +15,6 @@ body {
   font-size: larger;
 }
 
-.content {
-  margin-left: 350px;
-  margin-top: 150px;
-}
-
 body {
   color: var(--text); /* Default text color */
   background: var(--background); /* Default background */

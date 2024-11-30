@@ -1,7 +1,8 @@
+"use client";
 export default function Home() {
+  window.location.href = "/home";
   return (
     <div>
-      Home Page
     </div>
   );
 }

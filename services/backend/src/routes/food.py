@@ -34,8 +34,8 @@ def root():
 
 @routes.get("/nearby")
 def get_near_food(
-    lat: float,
-    long: float,
+    lat: float = 17.3967144,
+    long: float = 78.4898198,
     radius_km: int = 10
 ):
     session = get_db_session()
@@ -67,6 +67,8 @@ def get_near_food(
                 Available_Food.status == "available"
             )
         )
+        .order_by("distance")
+        .limit(10)
         .all()
     )
 

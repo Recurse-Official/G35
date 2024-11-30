@@ -1,30 +1,50 @@
-/* NavBar.css */
+/* General Navbar Styling */
 .navbar {
-  position: fixed; /* Stays static at the top */
-  top: 0;
-  left: 0;
-  width: 100%; /* Spans the full width of the viewport */
-  height: 100px; /* Fixed height for the navbar */
-  background-color: var(--primary); /* Light green background */
-  border-bottom: 1px solid var(--secondary); /* Soft green bottom border */
   display: flex;
+  justify-content: space-between; /* Distribute items to both ends */
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow for depth */
-  z-index: 1100; /* Ensures it stays above other content */
+  padding: 10px 20px;
+  background-color: #2f8f46; /* Green theme */
+  color: white;
+  font-family: 'Arial', sans-serif;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  font-size: 2rem;
 }
 
-/* Brand styling */
+/* Website Name (Left Side) */
 .navbar-brand {
-  font-size: 2.5rem; /* Large font size for the app name */
+  font-size: 2rem;
   font-weight: bold;
-  color: var(--darker-text); /* Darker olive for text */
-  font-family: Arial, sans-serif; /* Clean font style */
-  margin-left: 30px; /* Space to the left */
-  text-decoration: none; /* No underline */
+  text-decoration: none;
+  color: white;
+  transition: color 0.3s ease;
+  padding: 10px;
 }
 
-/* Brand hover effect */
 .navbar-brand:hover {
-  color: var(--text); /* Muted olive on hover */
-  cursor: pointer; /* Pointer cursor to indicate interactivity */
+  color: #c0e8ce; /* Light green on hover */
+}
+
+/* Sidebar items container (Right Side) */
+.navbar > div {
+  display: flex;
+  gap: 20px; /* Space between links */
+}
+
+/* Individual Sidebar Items */
+.sidebar-item {
+  font-size: 1.2rem;
+  padding: 10px 20px;
+  border: 1px solid white;
+  border-radius: 10px;
+  transition: color 0.3s ease;
+}
+
+.sidebar-item:hover {
+  background-color: white;
+  color: #196b35;
+  cursor: pointer;
 }
