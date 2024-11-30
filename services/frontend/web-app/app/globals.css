@@ -72,7 +72,7 @@ a {
   }
 
   body {
-    background: var(--text); /* Muted Olive background */
+    /* background: var(--text); Muted Olive background */
     color: var(--background); /* White text */
   }
 

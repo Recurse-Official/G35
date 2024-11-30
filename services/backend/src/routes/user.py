@@ -113,3 +113,13 @@ def get_user_donations(user_id: int):
 @routes.get("/leaderboard")
 def get_leaderboard():
     # get the top 5 users with the highest total servings donated
+    session = get_db_session()
+    users = session.query(User.full_name, User_Statistics.total_servings_donated).join(User_Statistics, User.id == User_Statistics.user_id).order_by(User_Statistics.total_servings_donated.desc()).limit(5).all()
+
+    return [
+        {
+            "name": user[0],
+            "plates": user[1]
+        }
+        for user in users
+    ]
