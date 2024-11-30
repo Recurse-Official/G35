@@ -31,12 +31,6 @@ class UserResponse(BaseModel):
 def root():
     return {"message": "Hello, World!"}
 
-@routes.get("/get/{id}")
-def get_user(id: int):
-    user = session.query(User).where(User.id == id).first()
-
-    return user # id
-
 @routes.get("/login")
 def login_user(email: str, password: str):
     try:
