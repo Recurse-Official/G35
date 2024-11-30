@@ -17,6 +17,7 @@ class FoodModel(BaseModel):
     food_title: str
     food_available: str
     num_servings: int
+    num_servings_left: int
     prepared_date: str
     expiration_date: str
     address_1: str
@@ -74,7 +75,7 @@ def get_near_food(
             "user_id": food.user_id,
             "food_title": food.food_title,
             "food_available": food.food_available,
-            "num_servings": food.num_servings,
+            "num_servings": food.num_servings_left,
             "prepared_date": food.prepared_date.strftime("%B %d, %Y"),
             "status": food.status,
             "distance": food.distance,
@@ -105,6 +106,7 @@ def add_food(
             food_title=food_model.food_title,
             food_available=food_model.food_available,
             num_servings=food_model.num_servings,
+            num_servings_left=food_model.num_servings,
             prepared_date=food_model.prepared_date,
             expiration_date=food_model.expiration_date,
             status="available",
