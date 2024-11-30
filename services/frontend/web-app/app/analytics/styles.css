@@ -2,8 +2,9 @@
 .analyticsPage {
   font-family: Arial, sans-serif;
   padding: 20px;
+  height: 100vh;
   color: #62825D; /* Text */
-  background-color: #C2FFC7; /* Primary */
+  background-color: #C2FFC7; 
 }
 
 .pageTitle {
@@ -46,7 +47,7 @@
   border: 1px solid #9EDF9C; /* Secondary */
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  background-color: #C2FFC7; /* Primary */
+  background-color: #fff; /* Primary */
   color: #62825D; /* Text */
 }
 
@@ -58,17 +59,8 @@
 
 .chartWrapper {
   height: 300px;
-  background-color: #9EDF9C; /* Secondary */
+  background-color: #fff; /* Secondary */
   border-radius: 8px;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.mapContainer {
-  margin-top: 40px;
-}
-
-.mapContainer h2 {
-  text-align: center;
-  margin-bottom: 10px;
-  color: #526E48; /* Darker Text */
-}

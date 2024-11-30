@@ -53,9 +53,9 @@ export function FoodTileContainer({ nearbyFood }: { nearbyFood: FoodTileProps[] 
                   <p>{food.food_available}</p>
                   <div className="food-info-line">
                     <span>Servings: {food.num_servings}</span>
-                    <span>Distance: {food.distance.toFixed(1)} km</span>
                     <span>Prepared: {new Date(food.prepared_date).toLocaleDateString()}</span>
                     <span>Expiration: {new Date(food.expiration_date).toLocaleDateString()}</span>
+                    <span>Distance: {food.distance.toFixed(1)} km</span>
                   </div>
                 </div>
                 {/* Right Section */}

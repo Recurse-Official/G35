@@ -1,8 +1,7 @@
 /* Container styling */
 .food-tile-container {
-  /* padding: 20px; */
   max-width: 800px; /* Adjusted width for two tiles per row */
-  margin: 0 550px; /* Centered layout */
+  margin: 0 490px; /* Centered layout */
   font-family: Arial, sans-serif;
 }
 
@@ -10,7 +9,7 @@
 .find-food-text {
   font-size: 32px; /* Larger font for title */
   font-weight: bold;
-  color: #2f8f46; /* Green theme */
+  color: #000; /* Green theme */
   text-align: left;
   margin-bottom: 20px; /* Space between title and tiles */
   display: block; /* Forces the title onto its own row */
@@ -28,7 +27,7 @@
 .food-tile {
   flex: 1 1 calc(50% - 20px); /* Two tiles per row */
   max-width: calc(50% - 20px); /* Ensures tiles are evenly sized */
-  background: #ffffff; /* White background */
+  background-color: #ffffff; /* White background */
   border: 1px solid #e0e0e0; /* Subtle border */
   border-radius: 12px;
   overflow: hidden;

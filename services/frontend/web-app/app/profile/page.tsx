@@ -135,16 +135,13 @@ export default function ProfilePage() {
 
   return (
     <div className="profile-page">
-      <h1>User Profile</h1>
+      <h1>{user.full_name}</h1>
       <div className="profile-info">
         <div className="profile-detail">
           <strong>Email:</strong> {user.email}
         </div>
         <div className="profile-detail">
           <strong>Username:</strong> {user.username || "N/A"}
-        </div>
-        <div className="profile-detail">
-          <strong>Full Name:</strong> {user.full_name || "N/A"}
         </div>
         <div className="profile-detail">
           <strong>Phone:</strong> {user.phone || "N/A"}
@@ -155,10 +152,6 @@ export default function ProfilePage() {
         <div className="profile-detail">
           <strong>Account Created At:</strong>{" "}
           {new Date(user.created_at).toLocaleDateString()}
-        </div>
-        <div className="profile-detail">
-          <strong>Last Updated At:</strong>{" "}
-          {new Date(user.updated_at).toLocaleDateString()}
         </div>
       </div>
       <div className="data-section">

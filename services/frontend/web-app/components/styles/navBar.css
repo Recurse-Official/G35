@@ -8,8 +8,10 @@
   color: white;
   font-family: 'Arial', sans-serif;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  position: sticky;
+  position: fixed; /* Change from sticky to fixed */
   top: 0;
+  left: 0; /* Ensure it's aligned to the left */
+  width: 100%; /* Make the navbar span the entire width of the screen */
   z-index: 1000;
   font-size: 2rem;
 }

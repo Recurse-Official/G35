@@ -4,14 +4,13 @@
     flex-direction: column;
     align-items: center;
     padding: 20px;
-    background-color: var(--primary); /* Set the entire background to Primary color */
     min-height: 100vh;
 }
   
 .find-page-header {
     text-align: center;
     font-size: 2rem;
-    color: var(--darker-text); /* Darker Text for the header */
+    color: #000; /* Darker Text for the header */
     margin-bottom: 20px;
 }
   
@@ -31,7 +30,7 @@
   
 /* Food Tile */
 .food-tile {
-    background-color: var(--primary); /* Set background of each tile to Primary color */
+    background-color: #fff; /* Set background of each tile to Primary color */
     border: 1px solid var(--text); /* Border with Text color */
     border-radius: 8px;
     padding: 16px;
@@ -55,13 +54,13 @@
 }
   
 .food-tile-left h3 {
-    color: var(--darker-text); /* Darker Text for food title */
+    color: #000; /* Darker Text for food title */
     font-size: 1.25rem;
     margin: 0;
 }
   
 .food-tile-left p {
-    color: var(--text); /* Text color for description */
+    color: #000;  /* Text color for description */
     font-size: 1rem;
     margin: 0;
 }
@@ -71,7 +70,7 @@
     flex-wrap: wrap;
     gap: 16px;
     margin-top: 8px;
-    color: var(--text); /* Text color for the info line */
+    color: #000;  /* Text color for the info line */
     font-size: 0.9rem;
 }
   

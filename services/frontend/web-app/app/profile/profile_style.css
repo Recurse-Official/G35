@@ -7,13 +7,13 @@
     padding: 20px;
     border: 1px solid #9EDF9C;
     border-radius: 10px;
-    background: #C2FFC7;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
   }
   
   h1 {
     text-align: center;
-    color: #526E48; /* Darker Text */
+    color: #000; /* Darker Text */
   }
   
   .profile-info {
@@ -22,11 +22,11 @@
   
   .profile-detail {
     padding: 5px 0;
-    color: #62825D; /* Text */
+    color: #000; /* Text */
   }
   
   .profile-detail strong {
-    color: #526E48; /* Darker Text */
+    color: #000; /* Darker Text */
   }
   
   .data-section {
@@ -40,26 +40,22 @@
   }
   
   .tab {
-    flex: 1;
+    flex: 0 1 350px; /* Adjust width to be a little narrower */
     text-align: center;
     padding: 10px;
-    border: 1px solid #9EDF9C; /* Secondary */
+    border: 1px solid #9EDF9C;
     border-radius: 5px;
-    background: #C2FFC7; /* Primary */
-    color: #526E48; /* Darker Text */
+    background-color: #fff;
+    color: #000;
     cursor: pointer;
-    transition: background 0.3s, color 0.3s;
+    transition: background-color 0.3s, color 0.3s;
   }
   
   .tab.active {
-    background: #9EDF9C; /* Secondary */
-    color: #526E48; /* Darker Text */
+    background-color: #1d9819;
+    color: #000;
   }
   
-  .tab:hover {
-    background: #9EDF9C; /* Secondary */
-    color: #62825D; /* Text */
-  }
   
   .data-display {
     margin-top: 10px;
@@ -77,8 +73,8 @@
     padding: 15px;
     border: 1px solid #9EDF9C; /* Secondary */
     border-radius: 8px;
-    background: #C2FFC7; /* Primary */
-    color: #62825D; /* Text */
+    background-color: #fff; /* Primary */
+    color: #000; /* Text */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s, box-shadow 0.3s;
   }
@@ -91,7 +87,7 @@
   
   .order-card strong,
   .donation-card strong {
-    color: #526E48; /* Darker Text */
+    color: #000; /* Darker Text */
   }
   
   .order-card div,
