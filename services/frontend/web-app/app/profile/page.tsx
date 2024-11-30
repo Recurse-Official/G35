@@ -4,6 +4,7 @@ import axios from "axios";
 import { BACKEND_URL } from "@/constants";
 
 interface UserDetails {
+  id: number;
   email: string;
   username: string;
   full_name: string;
@@ -13,22 +14,42 @@ interface UserDetails {
   updated_at: string;
 }
 
+async function getUserByEmail(email: string) {
+  const response = await axios.get(`${BACKEND_URL}/users/id/`, {
+    params: { email: email },
+  });
+  return response.data;
+}
+
+async function getUserDonations(userId: number) {
+  const response = await axios.get(`${BACKEND_URL}/users/get/donations/`, {
+    params: { userId: userId },
+  });
+  return response.data;
+}
+
+async function getUserOrders(userId: number) {
+  const response = await axios.get(`${BACKEND_URL}/users/get/orders/`, {
+    params: { userId: userId },
+  });
+  return response.data;
+}
+
 export default function ProfilePage() {
   const [user, setUser] = useState({} as UserDetails);
-  const [email, setEmail] = useState("user1@example.com"); // You can set this email dynamically based on the logged-in user.
+  const email = localStorage.getItem("user_email");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false); // Set `error` to accept any type.
+  const [donations, setDonations] = useState([]);
+  const [orders, setOrders] = useState([]);
 
   // Fetch user data based on the email
   useEffect(() => {
     if (email) {
       setLoading(true);
-      axios
-        .get(`${BACKEND_URL}/users/id/`, {
-          params: { email: email },
-        })
-        .then((response) => {
-          setUser(response.data);
+      getUserByEmail(email)
+        .then((user) => {
+          setUser(user);
           setLoading(false);
         })
         .catch(() => {
@@ -37,6 +58,28 @@ export default function ProfilePage() {
         });
     }
   }, [email]);
+
+  useEffect(() => {
+    const user_id = user.id;
+    if (user_id) {
+      setLoading(true);
+      getUserDonations(user_id)
+        .then((donations) => {
+          setDonations(donations);
+          getUserOrders(user_id)
+          .then((orders) => {
+            setOrders(orders);
+            setLoading(false);
+          })
+          setLoading(false);
+        })
+        .catch(() => {
+          setError(true);
+          setLoading(false);
+        });
+      }
+  }
+  , [user]);
 
   // Render loading state, error, or user profile
   if (loading) {

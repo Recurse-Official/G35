@@ -98,6 +98,6 @@ def get_user_orders(user_id: int):
 
 @routes.get("/get/donations/")
 def get_user_donations(user_id: int):
-    donations = session.query(Available_Food).where().all()
+    donations = session.query(Available_Food).where(Available_Food.user_id == user_id).all()
 
     return donations

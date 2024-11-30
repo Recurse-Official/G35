@@ -54,7 +54,7 @@ def get_near_food(
             Available_Food.user_id,
             Available_Food.food_title,
             Available_Food.food_available,
-            Available_Food.num_servings,
+            Available_Food.num_servings_left,
             Available_Food.prepared_date,
             Available_Food.status,
             distance_formula.label("distance")
