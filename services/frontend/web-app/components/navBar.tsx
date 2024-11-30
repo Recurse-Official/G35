@@ -26,7 +26,10 @@ export function NavBar() {
         <Link className="navbar-brand" href="/home">ShareMeal</Link>
       </div>
       <div>
-      <div className="sidebar-item">
+        <div className="sidebar-item">
+          <Link href="/immediate">Immediate Need</Link>
+        </div>
+        <div className="sidebar-item">
           <Link href="/find">Find Food</Link>
         </div>
         <div className="sidebar-item">

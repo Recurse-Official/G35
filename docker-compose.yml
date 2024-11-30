@@ -38,6 +38,9 @@ services:
       - MYSQL_USER=user
       - MYSQL_PASSWORD=password
       - MYSQL_DATABASE=food
+      - OLA_MAPS_API_KEY=OCUT1u3vgMbAJkGNfwjdLDUyu56excaUblmHWFSa
+    dns:
+      - 8.8.8.8
   
   mysql:
     image: mysql:8.0
