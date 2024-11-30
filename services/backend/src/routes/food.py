@@ -67,6 +67,7 @@ def get_near_food(
                 Available_Food.status == "available"
             )
         )
+        .order_by("expiration_date")
         .order_by("distance")
         .limit(10)
         .all()
