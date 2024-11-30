@@ -6,31 +6,31 @@
     padding: 20px;
     background-color: var(--primary); /* Set the entire background to Primary color */
     min-height: 100vh;
-  }
+}
   
-  .find-page-header {
+.find-page-header {
     text-align: center;
     font-size: 2rem;
     color: var(--darker-text); /* Darker Text for the header */
     margin-bottom: 20px;
-  }
+}
   
-  /* Food Tile Container */
-  .food-tile-container {
+/* Food Tile Container */
+.food-tile-container {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center; /* Centers food tiles */
     width: 100%;
     max-width: 1200px;
-    background-color: var(--secondary); /* Set background of food tile container to Secondary color */
+    /* Removed background-color and related styling */
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Adds shadow for depth */
-  }
+    border-radius: 8px; /* Retained for layout smoothness */
+    box-shadow: none; /* Removed shadow for neutral container */
+}
   
-  /* Food Tile */
-  .food-tile {
+/* Food Tile */
+.food-tile {
     background-color: var(--primary); /* Set background of each tile to Primary color */
     border: 1px solid var(--text); /* Border with Text color */
     border-radius: 8px;
@@ -39,47 +39,46 @@
     max-width: 500px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
+}
   
-  .food-tile:hover {
+.food-tile:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     cursor: pointer;
-  }
+}
   
-  .food-tile-left {
+.food-tile-left {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     gap: 8px;
-  }
+}
   
-  .food-tile-left h3 {
+.food-tile-left h3 {
     color: var(--darker-text); /* Darker Text for food title */
     font-size: 1.25rem;
     margin: 0;
-  }
+}
   
-  .food-tile-left p {
+.food-tile-left p {
     color: var(--text); /* Text color for description */
     font-size: 1rem;
     margin: 0;
-  }
+}
   
-  .food-info-line {
+.food-info-line {
     display: flex;
     flex-wrap: wrap;
     gap: 16px;
     margin-top: 8px;
     color: var(--text); /* Text color for the info line */
     font-size: 0.9rem;
-  }
+}
   
-  .food-tile-image {
+.food-tile-image {
     width: 120px;
     height: 120px;
     object-fit: cover;
     border-radius: 8px;
     border: 1px solid var(--text); /* Border to match with tile */
-  }
-  
+}

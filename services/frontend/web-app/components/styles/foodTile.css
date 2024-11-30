@@ -8,6 +8,7 @@
   padding: 16px;
   max-width: 1200px; /* Restrict maximum width */
   margin: 0 auto; /* Center the container */
+  /* No background or border styles here */
 }
 
 /* Food Tile: Adjust for uniform alignment */
@@ -16,8 +17,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px;
-  background-color: #ffffff; /* White background */
-  border: 1px solid #ddd; /* Subtle border */
+  background-color: #C2FFC7; /* Primary */
+  border: 1px solid #9EDF9C; /* Secondary */
   border-radius: 12px; /* Smooth corners */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -41,14 +42,14 @@
 
 .food-tile-left h3 {
   margin: 0;
-  color: #333; /* Dark text for titles */
+  color: #526E48; /* Darker Text */
   font-size: 1.6rem; /* Larger font for headings */
   font-weight: bold;
 }
 
 .food-tile-left p {
   margin: 0;
-  color: #555; /* Medium text for descriptions */
+  color: #62825D; /* Text */
   font-size: 1rem;
   line-height: 1.5;
 }
@@ -58,7 +59,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  color: #777; /* Lighter grey */
+  color: #62825D; /* Text */
   font-size: 0.85rem;
 }
 
@@ -68,7 +69,7 @@
   height: 120px;
   object-fit: cover;
   border-radius: 8px;
-  border: 1px solid #ddd; /* Matches the tile border */
+  border: 1px solid #9EDF9C; /* Secondary */
   flex-shrink: 0;
 }
 

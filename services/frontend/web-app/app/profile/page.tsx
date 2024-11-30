@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { BACKEND_URL } from "@/constants";
-import "./styles.css"
+import "./profile_style.css"
 
 interface UserDetails {
   id: number;

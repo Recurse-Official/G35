@@ -1,44 +1,101 @@
-/* ProfilePage Styling */
+/* profile_style.css */
+
 .profile-page {
     font-family: Arial, sans-serif;
-    color: #62825D; /* Text */
-    background-color: #C2FFC7; /* Primary */
+    max-width: 800px;
+    margin: 20px auto;
     padding: 20px;
-    border-radius: 8px;
-    max-width: 600px;
-    margin: 0 auto;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #9EDF9C;
+    border-radius: 10px;
+    background: #C2FFC7;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   }
   
   h1 {
-    color: #526E48; /* Darker Text */
     text-align: center;
-    margin-bottom: 20px;
+    color: #526E48; /* Darker Text */
   }
   
   .profile-info {
-    background-color: #9EDF9C; /* Secondary */
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
   }
   
   .profile-detail {
-    margin: 10px 0;
-    font-size: 16px;
-    line-height: 1.5;
+    padding: 5px 0;
+    color: #62825D; /* Text */
   }
   
   .profile-detail strong {
     color: #526E48; /* Darker Text */
-    margin-right: 5px;
   }
   
-  div {
-    text-align: left;
+  .data-section {
+    margin-top: 20px;
   }
   
-  div.profile-page div {
-    font-size: 18px;
+  .tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+  }
+  
+  .tab {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #9EDF9C; /* Secondary */
+    border-radius: 5px;
+    background: #C2FFC7; /* Primary */
+    color: #526E48; /* Darker Text */
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+  }
+  
+  .tab.active {
+    background: #9EDF9C; /* Secondary */
+    color: #526E48; /* Darker Text */
+  }
+  
+  .tab:hover {
+    background: #9EDF9C; /* Secondary */
+    color: #62825D; /* Text */
+  }
+  
+  .data-display {
+    margin-top: 10px;
+  }
+  
+  .orders,
+  .donations {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .order-card,
+  .donation-card {
+    padding: 15px;
+    border: 1px solid #9EDF9C; /* Secondary */
+    border-radius: 8px;
+    background: #C2FFC7; /* Primary */
+    color: #62825D; /* Text */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  .order-card:hover,
+  .donation-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .order-card strong,
+  .donation-card strong {
+    color: #526E48; /* Darker Text */
+  }
+  
+  .order-card div,
+  .donation-card div {
+    margin: 5px 0;
   }
   

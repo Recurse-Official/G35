@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { BACKEND_URL, RADIUS_KM } from "@/constants";
 import { FoodTileProps, FoodTileContainer } from "@/components/foodTile";
-
+import './findpage.css';
 export default function FindPage() {
     // const [location, setLocation] = useState({ latitude: 0, longitude: 0 });
     const [results, setResults] = useState([] as FoodTileProps[]);
