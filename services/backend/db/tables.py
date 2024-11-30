@@ -48,6 +48,7 @@ class Available_Food(Base):
     food_title = mapped_column(String(100), nullable=False)
     food_available = mapped_column(String(5000), nullable=False)  # Stringified JSON
     num_servings = mapped_column(BigInteger, nullable=False)
+    num_servings_left = mapped_column(BigInteger, nullable=False)
     created_at = mapped_column(TIMESTAMP, server_default=func.now(), nullable=False)
     prepared_date = mapped_column(TIMESTAMP, nullable=True)
     expiration_date = mapped_column(TIMESTAMP, nullable=True)
