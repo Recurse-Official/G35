@@ -5,7 +5,7 @@ from typing import Optional
 
 # all these are routes under /users
 routes = APIRouter()
-session = get_db_session()
+# session = get_db_session()
 
 class UserCreate(BaseModel):
     email: EmailStr
@@ -15,18 +15,6 @@ class UserCreate(BaseModel):
     password: str
     status: Optional[str]
 
-class UserResponse(BaseModel):
-    id: int
-    email: EmailStr
-    username: Optional[str]
-    full_name: Optional[str]
-    phone: Optional[str]
-    user_type: Optional[str]
-    status: Optional[str]
-
-    class Config:
-        orm_mode = True
-
 @routes.get("/")
 def root():
     return {"message": "Hello, World!"}
@@ -34,6 +22,7 @@ def root():
 @routes.get("/login")
 def login_user(email: str, password: str):
     try:
+        session = get_db_session()
         user = session.query(User).where(User.email == email).first()
 
         if not user:
@@ -52,6 +41,7 @@ def login_user(email: str, password: str):
 @routes.post("/signup")
 def signup_user(user: UserCreate):
     try:
+        session = get_db_session()
         if session.query(User).where(User.email == user.email).first():
             raise HTTPException(status_code=400, detail="Email already registered")
         
@@ -80,24 +70,42 @@ def signup_user(user: UserCreate):
     
 @routes.get("/stats/")
 def get_user_stats(user_id: int):
+    session = get_db_session()
     stats = session.query(User_Statistics).where(User_Statistics.user_id == user_id).first()
 
     return stats
 
 @routes.get("/id/")
 def get_user_id(email: str):
+    session = get_db_session()
     user = session.query(User).where(User.email == email).first()
 
     return user
 
 @routes.get("/get/orders/")
 def get_user_orders(user_id: int):
-    orders = session.query(Food_Orders).where(Food_Orders.user_id == user_id).all()
+    session = get_db_session()
+    orders = session.query(
+        Food_Orders,
+        Available_Food
+    ).join(
+        Available_Food,
+        Food_Orders.food_available_id == Available_Food.id
+    ).where(
+        Food_Orders.user_id == user_id
+    ).all()
 
-    return orders
+    return [
+        {
+            "order": order[0],
+            "food": order[1]
+        }
+        for order in orders
+    ]
 
 @routes.get("/get/donations/")
 def get_user_donations(user_id: int):
-    donations = session.query(Available_Food).where().all()
+    session = get_db_session()
+    donations = session.query(Available_Food).where(Available_Food.user_id == user_id).all()
 
     return donations
