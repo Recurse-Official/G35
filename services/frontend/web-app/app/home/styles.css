@@ -7,7 +7,7 @@
 .title {
     font-size: 32px; /* Increased font size */
     margin-bottom: 20px;
-    margin-left: 550px; /* Center the title */
+    margin-left: 550px; 
     color: #2f8f46; /* Green theme */
     font-weight: bold;
     font-family: 'Arial', sans-serif;
@@ -16,7 +16,7 @@
 /* Leaderboard table styling */
 .table {
     width: 50%;
-    margin: 0 550px; /* Center the table */
+    margin: 0 550px;
     border-collapse: collapse;
     font-family: 'Arial', sans-serif;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
