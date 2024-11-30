@@ -5,7 +5,7 @@ from typing import Optional
 
 # all these are routes under /orders
 routes = APIRouter()
-session = get_db_session()
+# session = get_db_session()
 
 class OrderModel(BaseModel):
     user_id: int
@@ -22,6 +22,7 @@ def root():
 @routes.post("/")
 def create_order(order: OrderModel):
     try:
+        session = get_db_session()
         if order.num_servings <= 0:
             return {
                 "status": "error",

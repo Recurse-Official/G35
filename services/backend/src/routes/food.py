@@ -9,7 +9,7 @@ from datetime import datetime
 
 # all these are routes under /food
 routes = APIRouter()
-session = get_db_session()
+# session = get_db_session()
 
 class FoodModel(BaseModel):
     user_id: int
@@ -39,6 +39,7 @@ def get_near_food(
     long: float,
     radius_km: int = 10
 ):
+    session = get_db_session()
     distance_formula = (
         6371 * func.acos(
             func.cos(func.radians(lat)) * func.cos(func.radians(Address.latitude)) *
@@ -87,6 +88,7 @@ def get_near_food(
 def add_food(
     food_model: FoodModel
 ):
+    session = get_db_session()
     try:
         address = AddressModel(
             address_1=food_model.address_1,
@@ -137,6 +139,7 @@ def add_food(
 
 @routes.get("/get/{id}")
 def get_food(id: int):
+    session = get_db_session()
     food = session.query(Available_Food).where(Available_Food.id == id).first()
 
     return food

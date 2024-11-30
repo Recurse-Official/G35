@@ -18,6 +18,7 @@ interface FoodDetails {
   food_title: string;
   food_available: string;
   num_servings: number;
+  num_servings_left: number;
   user_id: number;
   status: string;
   prepared_date: string;
@@ -48,6 +49,7 @@ interface AddressDetails {
 // }
 
 export default function FoodPage({ params }: FoodPageProps) {
+  const user_id = localStorage.getItem("user_id");
   const { id } = use(params);
   const [foodDetails, setFoodDetails] = useState({} as FoodDetails);
   const [addressId, setAddressId] = useState(0);
@@ -63,7 +65,6 @@ export default function FoodPage({ params }: FoodPageProps) {
     country: "",
     postal_code: "",
   });
-  const [deliveryAddressId, setDeliveryAddressId] = useState(0);
   const [coordinates, setCoordinates] = useState({ latitude: 0, longitude: 0 });
 
   useEffect(() => {
@@ -128,10 +129,10 @@ export default function FoodPage({ params }: FoodPageProps) {
     })
     .then((response: {data: {address: {id: number}}}) => {
       console.log("Delivery Address Submitted:", response.data);
-      setDeliveryAddressId(response.data.address.id);
+      const deliveryAddressId = response.data.address.id;
       // place order
       axios.post(`${BACKEND_URL}/orders`, {
-        user_id: foodDetails.user_id,
+        user_id,
         food_available_id: foodDetails.id,
         num_servings: numServings,
         address_id: foodDetails.address_id,
@@ -146,7 +147,7 @@ export default function FoodPage({ params }: FoodPageProps) {
     })
     .catch((error: Error) => console.error("Error submitting delivery address:", error));
 
-    window.location.href = "/home";
+    // window.location.href = "/home";
   };
 
   return (
@@ -167,7 +168,7 @@ export default function FoodPage({ params }: FoodPageProps) {
           {foodTypeLogo()}
         </h1>
         <p className="food-detail">Description: {foodDetails.food_available}</p>
-        <p className="food-detail">Servings: {foodDetails.num_servings}</p>
+        <p className="food-detail">Servings: {foodDetails.num_servings_left}</p>
         <p className="food-detail">
           Prepared Date: {new Date(foodDetails.prepared_date).toLocaleDateString()}
         </p>
