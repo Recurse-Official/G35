@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { BACKEND_URL } from "@/constants";
-import "./profile_style.css"
+import "./profile_style.css";
 
 interface UserDetails {
   id: number;
@@ -103,6 +103,17 @@ export default function ProfilePage() {
   const [orders, setOrders] = useState<OrderModel[]>([]);
   const [activeTab, setActiveTab] = useState<"orders" | "donations">("orders");
 
+  // Logout handler
+  const handleLogout = () => {
+    localStorage.removeItem("loggedIn");
+    window.localStorage.removeItem("user_id");
+    window.localStorage.removeItem("username");
+    window.localStorage.removeItem("phone");
+    window.localStorage.removeItem("full_name");
+    window.localStorage.removeItem("status");
+    window.location.href = "/login";
+  };
+
   // Fetch user data based on the email
   useEffect(() => {
     if (email) {
@@ -118,6 +129,18 @@ export default function ProfilePage() {
         });
     }
   }, [email]);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+        const isLoggedIn = localStorage.getItem("loggedIn");
+
+        if (!isLoggedIn) {
+            const currentPath = window.location.pathname;
+            if (currentPath !== "/login" && currentPath !== "/signup") {
+                window.location.href = "/login";
+            }
+        }
+    }
+}, []);
 
   // Fetch user stats after user data is loaded
   useEffect(() => {
@@ -166,7 +189,12 @@ export default function ProfilePage() {
 
   return (
     <div className="profile-page">
-      <h1>{user.full_name}</h1>
+      <div className="header">
+        <h1>{user.full_name}</h1>
+        <button className="logout-button" onClick={handleLogout}>
+          Logout
+        </button>
+      </div>
       <div className="profile-info">
         <div className="profile-detail">
           <strong>Email:</strong> {user.email}
@@ -186,7 +214,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Stats section */}
+      {/* Stats and Data Section */}
       <div className="user-stats">
         <div className="stat-item">
           <strong>Total Donations:</strong> {userStats.total_donations}

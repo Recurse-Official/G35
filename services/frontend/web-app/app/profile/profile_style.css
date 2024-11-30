@@ -146,3 +146,24 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   }
   
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .logout-button {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .logout-button:hover {
+    background-color: #e60000;
+  }
+  

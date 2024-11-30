@@ -49,7 +49,7 @@ def root():
 def get_near_food(
     lat: float = 17.3967144,
     long: float = 78.4898198,
-    radius_km: int = 10
+    radius_km: int = 1000
 ):
     session = get_db_session()
     distance_formula = (
@@ -82,7 +82,6 @@ def get_near_food(
         )
         .order_by("expiration_date")
         .order_by("distance")
-        .limit(10)
         .all()
     )
 

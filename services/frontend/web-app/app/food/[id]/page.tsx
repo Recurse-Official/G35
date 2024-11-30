@@ -79,6 +79,18 @@ export default function FoodPage({ params }: FoodPageProps) {
     );
   }
     , []);
+    useEffect(() => {
+      if (typeof window !== "undefined") {
+          const isLoggedIn = localStorage.getItem("loggedIn");
+
+          if (!isLoggedIn) {
+              const currentPath = window.location.pathname;
+              if (currentPath !== "/login" && currentPath !== "/signup") {
+                  window.location.href = "/login";
+              }
+          }
+      }
+  }, []);
 
   useEffect(() => {
     axios.get(`${BACKEND_URL}/food/get/${id}`)
