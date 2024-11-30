@@ -28,7 +28,6 @@ services:
     build:
       context: ./services/backend
       dockerfile: Dockerfile
-    container_name: api
     networks:
       - elastic
     depends_on:
@@ -53,13 +52,13 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: password
     volumes:
-      # - ./services/backend/db:/docker-entrypoint-initdb.d
       - mysql-data:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "--silent"]
       interval: 10s
       timeout: 5s
       retries: 3
+    command: --max_connections=500 --innodb_buffer_pool_size=2G
 
 networks:
   elastic:
