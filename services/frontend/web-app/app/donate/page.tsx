@@ -208,6 +208,8 @@ export default function DonatePage() {
                 />
             </div>
 
+            <p className="donate-page-description">Please make sure the food has not gone bad before you donate</p>
+            <p className="donate-page-description">Thank you</p>
             <button className="donate-button" onClick={handleDonate}>
                 Donate
             </button>
