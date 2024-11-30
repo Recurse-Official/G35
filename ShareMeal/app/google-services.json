@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1074130231273",
+    "project_id": "sharemeal-89938",
+    "storage_bucket": "sharemeal-89938.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1074130231273:android:c274b81bc100bc2ec33578",
+        "android_client_info": {
+          "package_name": "com.example.sharemeal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1074130231273-pab7i214ao1mei3f9o3t33h8s0nvkodi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sharemeal",
+            "certificate_hash": "f0fbb2f30c54c5a7f2b271795626096e5ed46114"
+          }
+        },
+        {
+          "client_id": "1074130231273-0e9tclp3s8t2dn9rfgrp4e071l79bls4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDK922wFWfOEXtf2PytZ63tfCBOARt69rM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1074130231273-0e9tclp3s8t2dn9rfgrp4e071l79bls4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
