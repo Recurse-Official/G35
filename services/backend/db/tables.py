@@ -142,10 +142,11 @@ def populate_data(session):
             for i in range(2):  # Each user has 3 food items available
                 food = Available_Food(
                     user_id=user.id,
-                    food_type=f"Food Type {i}",
+                    food_type=random.choice(["Veg", "Non-Veg"]),
                     food_title=f"Food Title {i}",
                     food_available=f'{{"item{i}": "Food Item {i}"}}',
                     num_servings=random.randint(5, 20),
+                    num_servings_left=random.randint(2, 10),
                     prepared_date=func.now(),
                     expiration_date=func.now(),
                     status="available",

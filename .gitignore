@@ -1,6 +1,5 @@
 node_modules
 .next
-start
 __pycache__
 .gradle/
 build/
