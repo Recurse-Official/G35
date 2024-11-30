@@ -36,7 +36,7 @@ def create_order(order: OrderModel):
             }
 
         # Check if there are enough servings
-        if food.num_servings < order.num_servings:
+        if food.num_servings_left < order.num_servings:
             return {
                 "status": "error",
                 "message": "Not enough servings available"
@@ -56,8 +56,8 @@ def create_order(order: OrderModel):
         session.refresh(user_stats)
 
         # Update the number of servings and status
-        food.num_servings -= order.num_servings
-        if food.num_servings == 0:
+        food.num_servings_left -= order.num_servings
+        if food.num_servings_left == 0:
             food.status = "completed"
         session.add(food)
         session.commit()
