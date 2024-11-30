@@ -7,8 +7,31 @@
     background: #fff;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    color: #000;
   }
   
+/* Input field styling */
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #fafafa;
+    color: #000; /* Ensure text inside input/select is black */
+    box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #2f8f46; /* Focus border color */
+    outline: none;
+    box-shadow: 0 0 5px rgba(47, 143, 70, 0.3);
+    color: #000; /* Ensure text remains visible on focus */
+    background-color: #fff; /* Optional: brighten background on focus */
+}
+
   /* Title styling for the donate page */
   .donate-page-title {
     font-size: 1.5rem;
@@ -23,26 +46,27 @@
     font-size: 18px;
     text-align: center;
     margin-bottom: 30px;
-    color: #555;
+    color: #000;
   }
   
   /* Section title for the address part */
   .form-section-title {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #333;
+    color: #000;
     margin-bottom: 10px;
   }
   
   /* Form group styling (label + input) */
   .form-group {
     margin-bottom: 20px;
+    color: #000;
   }
   
   .form-group label {
     font-size: 20px;
     font-weight: bold;
-    color: #333;
+    color: #000;
     margin-bottom: 5px;
     display: block;
   }
@@ -101,25 +125,5 @@
   .status-message.error {
     background-color: #f8d7da;
     color: #721c24;
-  }
-  
-  /* Responsive adjustments for small screens */
-  @media (max-width: 600px) {
-    .donate-page-container {
-      padding: 15px;
-      max-width: 100%; /* Full width on smaller screens */
-    }
-  
-    .donate-page-title {
-      font-size: 30px;
-    }
-  
-    .donate-page-description {
-      font-size: 16px;
-    }
-  
-    .donate-button {
-      font-size: 16px;
-    }
   }
   

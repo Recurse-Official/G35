@@ -57,9 +57,24 @@ interface DonationModel {
   status: string;
 }
 
+interface UserStats {
+  user_id: number;
+  total_donations: number;
+  total_servings_donated: number;
+  total_orders: number;
+  total_servings_ordered: number;
+}
+
 async function getUserByEmail(email: string) {
   const response = await axios.get(`${BACKEND_URL}/users/id/`, {
     params: { email: email },
+  });
+  return response.data;
+}
+
+async function getUserStats(userId: number) {
+  const response = await axios.get(`${BACKEND_URL}/users/stats/`, {
+    params: { user_id: userId },
   });
   return response.data;
 }
@@ -80,6 +95,7 @@ async function getUserOrders(userId: number) {
 
 export default function ProfilePage() {
   const [user, setUser] = useState({} as UserDetails);
+  const [userStats, setUserStats] = useState({} as UserStats);
   const email = localStorage.getItem("user_email");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -103,6 +119,21 @@ export default function ProfilePage() {
     }
   }, [email]);
 
+  // Fetch user stats after user data is loaded
+  useEffect(() => {
+    const user_id = user.id;
+    if (user_id) {
+      getUserStats(user_id)
+        .then((stats) => {
+          setUserStats(stats);
+        })
+        .catch(() => {
+          setError(true);
+        });
+    }
+  }, [user]);
+
+  // Fetch user donations and orders
   useEffect(() => {
     const user_id = user.id;
     if (user_id) {
@@ -154,6 +185,24 @@ export default function ProfilePage() {
           {new Date(user.created_at).toLocaleDateString()}
         </div>
       </div>
+
+      {/* Stats section */}
+      <div className="user-stats">
+        <div className="stat-item">
+          <strong>Total Donations:</strong> {userStats.total_donations}
+        </div>
+        <div className="stat-item">
+          <strong>Total Servings Donated:</strong> {userStats.total_servings_donated}
+        </div>
+        <br />
+        <div className="stat-item">
+          <strong>Total Orders:</strong> {userStats.total_orders}
+        </div>
+        <div className="stat-item">
+          <strong>Total Servings Ordered:</strong> {userStats.total_servings_ordered}
+        </div>
+      </div>
+
       <div className="data-section">
         <div className="tabs">
           <div

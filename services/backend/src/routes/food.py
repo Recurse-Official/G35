@@ -114,8 +114,8 @@ def add_food(
             state=food_model.state,
             country=food_model.country,
             postal_code=food_model.postal_code,
-            latitude=food_model.latitude or 17.453001,
-            longitude=food_model.longitude or 78.395264
+            latitude=food_model.latitude,
+            longitude=food_model.longitude
         )
         address_id = create_address(address)["address"].id
 
@@ -154,7 +154,7 @@ def add_food(
             "message": str(e)
         }
 
-@routes.get("/get/{id}")
+@routes.get("/get/")
 def get_food(id: int):
     session = get_db_session()
     food = session.query(Available_Food).where(Available_Food.id == id).first()
