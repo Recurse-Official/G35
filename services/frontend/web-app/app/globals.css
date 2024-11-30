@@ -1,6 +1,11 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --primary: #C2FFC7; /* Light Green */
+  --secondary: #9EDF9C; /* Soft Green */
+  --text: #62825D; /* Muted Olive */
+  --darker-text: #526E48; /* Darker Olive */
+  --background: #ffffff; /* White background */
+  --border-color: #e0e0e0; /* Light grey border */
+  --accent-color: #C2FFC7; /* Accent color matching primary */
 }
 
 html,
@@ -14,14 +19,16 @@ body {
   margin-left: 350px;
   margin-top: 150px;
 }
+
 body {
-  color: var(--foreground);
-  background: var(--background);
+  color: var(--text); /* Default text color */
+  background: var(--background); /* Default background */
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* General Resets */
 * {
   box-sizing: border-box;
   padding: 0;
@@ -33,8 +40,78 @@ a {
   text-decoration: none;
 }
 
+/* Light Mode Styles */
+@media (prefers-color-scheme: light) {
+  body {
+    background: var(--background);
+    color: var(--text);
+  }
+
+  .food-tile {
+    background-color: var(--primary); /* Light green background for food tile */
+    border: 1px solid var(--border-color); /* Light border */
+  }
+
+  .food-tile-left h3 {
+    color: var(--darker-text); /* Darker text for titles */
+  }
+
+  .food-tile-left p {
+    color: var(--text); /* Muted olive for text */
+  }
+
+  .food-info-line {
+    color: var(--secondary); /* Soft green for info lines */
+  }
+}
+
+/* Dark Mode Styles */
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
   }
+
+  body {
+    background: var(--text); /* Muted Olive background */
+    color: var(--background); /* White text */
+  }
+
+  .food-tile {
+    background-color: var(--darker-text); /* Darker green background for food tile */
+    border: 1px solid #444444; /* Darker border for food tile */
+  }
+
+  .food-tile-left h3 {
+    color: var(--primary); /* Light green text for titles */
+  }
+
+  .food-tile-left p,
+  .food-info-line {
+    color: var(--secondary); /* Soft green for secondary text */
+  }
+
+  .food-info-line {
+    color: #aaaaaa; /* Lighter grey for info lines */
+  }
+}
+
+/* Button Styling */
+button {
+  background-color: var(--primary); /* Light green button color */
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: var(--secondary); /* Soft green on hover */
+}
+
+/* Food Tile Hover */
+.food-tile:hover {
+  cursor: pointer;
+  transform: translateY(-5px); /* Slight lift effect */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Stronger shadow on hover */
 }

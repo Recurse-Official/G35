@@ -2,12 +2,14 @@
 .analyticsPage {
   font-family: Arial, sans-serif;
   padding: 20px;
+  color: #62825D; /* Text */
+  background-color: #C2FFC7; /* Primary */
 }
 
 .pageTitle {
   text-align: center;
   font-size: 2rem;
-  color: #333;
+  color: #526E48; /* Darker Text */
 }
 
 .loading {
@@ -15,11 +17,12 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  color: #62825D; /* Text */
 }
 
 .spinner {
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  border-top: 4px solid #3498db;
+  border: 4px solid rgba(98, 130, 93, 0.1); /* Text (lightened for subtle effect) */
+  border-top: 4px solid #9EDF9C; /* Secondary */
   border-radius: 50%;
   width: 50px;
   height: 50px;
@@ -40,18 +43,24 @@
 .card {
   width: 30%;
   padding: 20px;
-  border: 1px solid #ccc;
+  border: 1px solid #9EDF9C; /* Secondary */
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #C2FFC7; /* Primary */
+  color: #62825D; /* Text */
 }
 
 .card h2 {
   text-align: center;
   margin-bottom: 20px;
+  color: #526E48; /* Darker Text */
 }
 
 .chartWrapper {
   height: 300px;
+  background-color: #9EDF9C; /* Secondary */
+  border-radius: 8px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .mapContainer {
@@ -61,4 +70,5 @@
 .mapContainer h2 {
   text-align: center;
   margin-bottom: 10px;
+  color: #526E48; /* Darker Text */
 }

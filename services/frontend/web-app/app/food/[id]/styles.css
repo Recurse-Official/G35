@@ -1,147 +1,154 @@
 /* Main container for the food page */
 .food-page-container {
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-  }
-  
-  /* Food image container */
-  .food-image-container {
-    text-align: center;
-  }
-  
-  .food-image {
-    width: 100%;
-    max-width: 800px;
-    height: auto;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  /* Food details section */
-  .food-details {
-    font-size: 1.2rem;
-    line-height: 1.5;
-    max-width: 800px;
-    margin: 0 auto;
-  }
-  
-  /* Food title */
-  .food-title {
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-  }
-  
-  .food-type-logo {
-    margin-left: 10px;
-    width: 30px;
-    height: 30px;
-  }
-  
-  /* Food description and details */
-  .food-detail {
-    margin-bottom: 10px;
-    color: #555;
-  }
-  
-  /* Address details section */
-  .address-details {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .address-details h2 {
-    margin-bottom: 15px;
-    font-size: 1.6rem;
-  }
-  
-  .address-detail-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-  }
-  
-  .address-label {
-    font-weight: bold;
-  }
-  
-  .address-value {
-    color: #555;
-  }
-  
-  /* Order input form */
-  .order-form {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .order-form h3 {
-    font-size: 1.6rem;
-    margin-bottom: 20px;
-  }
-  
-  .order-form label {
-    display: block;
-    margin-bottom: 10px;
-    font-weight: bold;
-  }
-  
-  /* Update for input fields to fix the black text color issue */
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  color: #62825D; /* Text */
+  background-color: #C2FFC7; /* Primary */
+}
+
+/* Food image container */
+.food-image-container {
+  text-align: center;
+}
+
+.food-image {
+  width: 100%;
+  max-width: 800px;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Food details section */
+.food-details {
+  font-size: 1.2rem;
+  line-height: 1.5;
+  max-width: 800px;
+  margin: 0 auto;
+  color: #62825D; /* Text */
+}
+
+/* Food title */
+.food-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  color: #526E48; /* Darker Text */
+}
+
+.food-type-logo {
+  margin-left: 10px;
+  width: 30px;
+  height: 30px;
+}
+
+/* Food description and details */
+.food-detail {
+  margin-bottom: 10px;
+  color: #62825D; /* Text */
+}
+
+/* Address details section */
+.address-details {
+  background-color: #9EDF9C; /* Secondary */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: #62825D; /* Text */
+}
+
+.address-details h2 {
+  margin-bottom: 15px;
+  font-size: 1.6rem;
+  color: #526E48; /* Darker Text */
+}
+
+.address-detail-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.address-label {
+  font-weight: bold;
+  color: #526E48; /* Darker Text */
+}
+
+.address-value {
+  color: #62825D; /* Text */
+}
+
+/* Order input form */
+.order-form {
+  background-color: #9EDF9C; /* Secondary */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: #62825D; /* Text */
+}
+
+.order-form h3 {
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+  color: #526E48; /* Darker Text */
+}
+
+.order-form label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #526E48; /* Darker Text */
+}
+
+/* Input fields */
 .order-form input {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    font-size: 1rem;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    color: #333;  /* Set text color to dark gray */
-    background-color: #fff; /* White background for clarity */
-  }
-  
-  .order-form input:focus {
-    outline: none;
-    border-color: #77da81;  /* Focus border color */
-    color: #333; /* Keep the text color dark on focus */
-  }
-  
-  
-  /* Order button container */
-  .order-button-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-  }
-  
-  .order-button {
-    padding: 24px 48px;
-    background-color: #77da81;
-    color: white;
-    font-size: 1.5rem;
-    font-weight: bold;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .order-button:hover {
-    background-color: #66bb6f;
-  }
-  
-  /* Loading state */
-  .loading {
-    text-align: center;
-    font-size: 1.5rem;
-    color: #77da81;
-  }
-  
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #9EDF9C; /* Secondary */
+  color: #62825D; /* Text */
+  background-color: #C2FFC7; /* Primary */
+}
+
+.order-form input:focus {
+  outline: none;
+  border-color: #526E48; /* Darker Text */
+}
+
+/* Order button container */
+.order-button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.order-button {
+  padding: 12px 24px;
+  background-color: #9EDF9C; /* Secondary */
+  color: #526E48; /* Darker Text */
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.order-button:hover {
+  background-color: #62825D; /* Text */
+}
+
+/* Loading state */
+.loading {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #526E48; /* Darker Text */
+}

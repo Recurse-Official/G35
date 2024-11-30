@@ -5,24 +5,26 @@
   left: 0;
   width: 100%; /* Spans the full width of the viewport */
   height: 100px; /* Fixed height for the navbar */
-  background-color: #f9f9f9; /* Light grey background */
-  border-bottom: 1px solid #e0e0e0; /* Subtle grey border at the bottom */
+  background-color: var(--primary); /* Light green background */
+  border-bottom: 1px solid var(--secondary); /* Soft green bottom border */
   display: flex;
   align-items: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow for depth */
   z-index: 1100; /* Ensures it stays above other content */
 }
 
+/* Brand styling */
 .navbar-brand {
   font-size: 2.5rem; /* Large font size for the app name */
   font-weight: bold;
-  color: #333; /* Dark grey for text */
+  color: var(--darker-text); /* Darker olive for text */
   font-family: Arial, sans-serif; /* Clean font style */
   margin-left: 30px; /* Space to the left */
   text-decoration: none; /* No underline */
 }
 
+/* Brand hover effect */
 .navbar-brand:hover {
-  color: #000; /* Black on hover */
+  color: var(--text); /* Muted olive on hover */
   cursor: pointer; /* Pointer cursor to indicate interactivity */
 }
