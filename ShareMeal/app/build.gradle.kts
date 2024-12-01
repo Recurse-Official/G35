@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
+
 }
 
 android {
@@ -79,7 +80,11 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation ("com.google.code.gson:gson:2.10")
     implementation ("com.squareup.okhttp3:logging-interceptor:4.9.0")
-
+    implementation ("io.ktor:ktor-client-core:2.1.0")
+    implementation ("io.ktor:ktor-client-android:2.1.0") // If you're using Android
+    implementation ("io.ktor:ktor-client-json:2.1.0")
+    implementation ("io.ktor:ktor-client-serialization:2.1.0")
+    implementation ("com.google.accompanist:accompanist-swiperefresh:0.36.0")
 
 
 

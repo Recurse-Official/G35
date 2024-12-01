@@ -1,9 +1,7 @@
 package com.example.sharemeal
 
 import android.content.Context
-import android.content.res.Configuration
 import android.os.Bundle
-import android.provider.Settings.Global.putString
 import android.util.Log
 import android.util.Patterns
 import android.view.WindowManager
@@ -13,8 +11,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
@@ -22,23 +20,19 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -52,9 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -78,13 +70,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
-import retrofit2.Call
-import androidx.navigation.navArgument
+import androidx.compose.material3.Text
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.graphics.graphicsLayer
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.google.gson.Gson
+import kotlinx.coroutines.launch
 
 
 class MainActivity : ComponentActivity() {
@@ -119,6 +113,7 @@ class MainActivity : ComponentActivity() {
         }
 
 }
+
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
@@ -137,13 +132,40 @@ fun BottomNavigationBar(navController: NavController) {
         NavigationItem.Profile
     )
 
-    NavigationBar {
-        val currentRoute = navController.currentDestination?.route
+    NavigationBar(
+        containerColor = Color(0xFF006400) // Dark green color
+    ) {
+        val currentRoute = navController.currentDestination?.route // Get current route from NavController
         items.forEach { item ->
+            val isSelected = currentRoute?.contains(item.route) == true
+
             NavigationBarItem(
-                icon = { Icon(item.icon, contentDescription = item.title) },
-                label = { Text(item.title) },
-                selected = currentRoute == item.route,
+                icon = {
+                    Icon(
+                        item.icon,
+                        contentDescription = item.title,
+                        tint = if (isSelected) Color.White else Color.LightGray
+                    )
+                },// White icon when selected, light gray when unselected
+
+                label = {
+                    Text(
+                        item.title,
+                        color = if (isSelected) Color.White else Color.LightGray // White text when selected, light gray when unselected
+                    )
+                },
+                selected = isSelected, // Set the selected state
+
+//                selected = currentRoute == item.route,
+                colors = NavigationBarItemColors(
+                    selectedIconColor = Color.Green,  // Green when selected
+                    unselectedIconColor = Color.Gray, // Optional: Change the unselected icon color
+                    disabledIconColor = Color.Gray,   // Optional: Change disabled icon color (if needed)
+                    selectedIndicatorColor = Color.Green, // Optional: Customize selected indicator color
+                    selectedTextColor = Color.Green, // Optional: Customize selected text color
+                    unselectedTextColor = Color.Gray, // Optional: Customize unselected text color
+                    disabledTextColor = Color.Gray   // Set disabled text color
+                ),
                 onClick = {
                     navController.navigate(item.route) {
                         popUpTo(navController.graph.startDestinationId) { saveState = true }
@@ -160,30 +182,352 @@ sealed class NavigationItem(val route: String, val icon: ImageVector, val title:
     object Donate : NavigationItem("donate", Icons.Default.ShoppingCart, "Donate")
     object Profile : NavigationItem("profile", Icons.Default.Person, "Profile")
 }
-
-
 @Composable
 fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(navController, startDestination = NavigationItem.Leaderboard.route, modifier = modifier) {
         composable(NavigationItem.Leaderboard.route) { LeaderboardScreen(navController) }
-        composable(NavigationItem.Donate.route) { DonatePage() }
+        composable(NavigationItem.Donate.route) { DonatePage(navController) }
         composable(NavigationItem.Profile.route) { ProfilePage() }
+        composable("home") { LeaderboardScreen(navController) } // Add HomeScreen here
         composable("login") { LoginScreen(navController) }
         composable("registration") { RegistrationScreen(navController) }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DonatePage() {
+fun DonatePage(navController: NavHostController) {
+    // Create a Scrollable Column
+    var foodType by remember { mutableStateOf("Veg") }
+    var foodTypeMenuExpanded by remember { mutableStateOf(false) }
+    var foodTitle by remember { mutableStateOf("") }
+    var foodAvailable by remember { mutableStateOf("") }
+    var servings by remember { mutableStateOf("") }
+    var preparedDate by remember { mutableStateOf("") }
+    var expirationDate by remember { mutableStateOf("") }
+    var addressLine1 by remember { mutableStateOf("") }
+    var addressLine2 by remember { mutableStateOf("") }
+    var city by remember { mutableStateOf("") }
+    var state by remember { mutableStateOf("") }
+    var country by remember { mutableStateOf("") }
+    var postalCode by remember { mutableStateOf("") }
+    val context = LocalContext.current // Required to show a Toast
+
+    val coroutineScope = rememberCoroutineScope()
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFC2FFC7)),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = "Welcome to the Donate Page", style = MaterialTheme.typography.headlineMedium)
+        // Scrollable Column
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            item {
+                // Heading: Donate Food
+
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()  // Take the full width
+                        .padding(bottom = 16.dp)
+                ) {
+                    Text(
+                        text = "Donate Food",
+                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                        modifier = Modifier.align(Alignment.Center) // Align horizontally in the box
+                    )
+                }
+            }
+
+
+            item {
+                // Food Type Heading and Drop Down
+                Text(
+                    text = "Food Type",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+//                var foodType by remember { mutableStateOf("Veg") }
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 2.dp)
+                    ) {
+                        RadioButton(
+                            selected = foodType == "Veg",
+                            onClick = { foodType = "Veg" }
+                        )
+                        Text(
+                            text = "Veg",
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
+                    }
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 2.dp)
+                    ) {
+                        RadioButton(
+                            selected = foodType == "Non-Veg",
+                            onClick = { foodType = "Non-Veg" }
+                        )
+                        Text(
+                            text = "Non-Veg",
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
+                    }
+                }
+            }
+            item {
+                // Food Title Heading and Text
+                Text(
+                    text = "Food Title",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                )
+                TextField(
+                    value = foodTitle,
+                    onValueChange = { foodTitle = it },
+                    label = { Text("Enter food title") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            item {
+                // Food Available Heading and Text Box
+                Text(
+                    text = "Food Available",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                )
+                TextField(
+                    value = foodAvailable,
+                    onValueChange = { foodAvailable = it },
+                    label = { Text("Enter available food quantity") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            item {
+                // Number of Servings
+                Text(
+                    text = "Number of Servings",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                )
+                TextField(
+                    value = servings,
+                    onValueChange = { servings = it },
+                    label = { Text("Enter number of servings") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            item {
+                // Prepared Date
+                Text(
+                    text = "Prepared Date",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                )
+                TextField(
+                    value = preparedDate,
+                    onValueChange = { preparedDate = it },
+                    label = { Text("Enter prepared date") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            item {
+                // Expiration Date
+                Text(
+                    text = "Expiration Date",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                )
+                TextField(
+                    value = expirationDate,
+                    onValueChange = { expirationDate = it },
+                    label = { Text("Enter expiration date") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            item {
+                Divider(
+                    modifier = Modifier.padding(top = 20.dp),  // Optional padding
+                    thickness = 1.dp,  // Set the thickness of the divider
+                    color = Color.Gray  // Set the color of the divider (adjust as needed)
+                )
+            }
+            item {
+                // Address Heading
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()  // Take the full width
+                        .padding(bottom = 16.dp, top = 16.dp)
+                ) {
+                    Text(
+                        text = "Address",
+                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                        modifier = Modifier.align(Alignment.Center) // Align horizontally in the box
+                    )
+                }
+
+            }
+            item {
+                // Address Line 1
+                Text(
+                    text = "Address Line 1",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                )
+                TextField(
+                    value = addressLine1,
+                    onValueChange = { addressLine1 = it },
+                    label = { Text("Address Line 1") },
+                    modifier = Modifier.fillMaxWidth().background(Color.White),
+
+                    )
+            }
+            item {
+                // Address Line 2
+                Text(
+                    text = "Address Line 2",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                )
+                TextField(
+                    value = addressLine2,
+                    onValueChange = { addressLine2 = it },
+                    label = { Text("Address Line 2") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            item {
+                // City
+                Text(
+                    text = "City",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                )
+                TextField(
+                    value = city,
+                    onValueChange = { city = it },
+                    label = { Text("City") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            item {
+                // State
+                Text(
+                    text = "State",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                )
+                TextField(
+                    value = state,
+                    onValueChange = { state = it },
+                    label = { Text("State") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            item {
+                // Country
+                Text(
+                    text = "Country",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                )
+                TextField(
+                    value = country,
+                    onValueChange = { country = it },
+                    label = { Text("Country") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            item {
+                // Postal Code
+                Text(
+                    text = "Postal code",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                )
+                TextField(
+                    value = postalCode,
+                    onValueChange = { postalCode = it },
+                    label = { Text("Postal Code") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            item {
+                // Donate Button
+                Button(
+                    onClick = {
+                        coroutineScope.launch {
+                            val servingsInt = servings.toIntOrNull() ?: 0 // Default to 0 if invalid
+                            if (servingsInt is Int ) { // Replace `1` with your actual user_id logic
+                                println("Both servings and user_id are integers")
+                            }
+                                println("Type of servings: ${servingsInt::class.simpleName}")
+                                println("Type of user_id: ${1::class.simpleName}") // Replace `1` with actual user_id logic
+
+                                // Create the donation object with form data
+                            val donation = FoodDonation(
+                                user_id = 1, // Assuming user_id is 1 or dynamically fetched based on the logged-in user
+                                food_type = foodType,
+                                food_title = foodTitle,
+                                food_available = foodAvailable,
+                                num_servings = servingsInt,
+                                prepared_date = preparedDate,
+                                expiration_date = expirationDate,
+                                address_1 = addressLine1,
+                                address_2 = addressLine2,
+                                city = city,
+                                state = state,
+                                country = country,
+                                postal_code = postalCode,
+                                latitude = 17.453001,
+                                longitude = 78.395264
+                            )
+                            val gson = Gson()
+                            val jsonPayload = gson.toJson(donation)
+                            println("Payload: $jsonPayload")
+
+
+                            // Submit the donation using the Retrofit API
+                            addDonation(donation, onSuccess = {
+                                // Handle success (e.g., show a success message or navigate to another screen)
+                                navController.navigate("home") {
+                                    popUpTo("donate") { inclusive = true } // Clear DonatePage from backstack
+                                }
+                                Toast.makeText(context, "Donation added successfully!", Toast.LENGTH_SHORT).show()
+                                println("Donation added successfully!")
+
+                            }, onError = { errorMessage ->
+                                // Handle error (e.g., show an error message)
+                                println("Error: $errorMessage")
+                                Toast.makeText(context, "Error: $errorMessage", Toast.LENGTH_SHORT).show()
+
+                            })
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp)
+                ) {
+                    Text("Donate")
+                }
+            }
+            }
+        }
     }
-}
+
+
 
 @Composable
 fun ProfilePage() {
@@ -201,48 +545,98 @@ fun ProfilePage() {
 
 @Composable
 fun LeaderboardScreen(navController: NavController) {
+    val availableFoodList = remember { mutableStateListOf<AvailableFood>() }
+    val isRefreshing = remember { mutableStateOf(false) }
+
+    // Fetch data initially on first composition
+    LaunchedEffect(Unit) {
+        try {
+            val response = RetrofitClient.availableFoodApi.getNearbyFood()
+            availableFoodList.clear()
+            availableFoodList.addAll(response)
+        } catch (e: Exception) {
+            e.printStackTrace() // Handle error
+        }
+    }
+
+    // Fetch data when refreshing is triggered
+    LaunchedEffect(isRefreshing.value) {
+        if (isRefreshing.value) {
+            try {
+                val response = RetrofitClient.availableFoodApi.getNearbyFood()
+                availableFoodList.clear()
+                availableFoodList.addAll(response)
+            } catch (e: Exception) {
+                e.printStackTrace() // Handle error
+            } finally {
+                isRefreshing.value = false // Reset refreshing state
+            }
+        }
+    }
+
+    // Define a rotation animation
+    val infiniteTransition = rememberInfiniteTransition()
+    val rotationAngle by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 2000, easing = FastOutSlowInEasing)
+        )
+    )
+
     AnimatedVisibility(
         visible = true,
         enter = fadeIn(initialAlpha = 0.3f) + slideInVertically(initialOffsetY = { it }),
         exit = fadeOut()
     ) {
-        val availableFoodList = remember { mutableStateListOf<AvailableFood>() }
-        LaunchedEffect(Unit) {
-            try {
-                val response = RetrofitClient.availableFoodApi.getNearbyFood()
-                availableFoodList.addAll(response)
-            } catch (e: Exception) {
-                e.printStackTrace() // Log the error for debugging
+        SwipeRefresh(
+            state = rememberSwipeRefreshState(isRefreshing.value),
+            onRefresh = {
+                isRefreshing.value = true // Trigger refresh
+            },
+            indicator = { state, trigger ->
+                if (state.isRefreshing) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(trigger)
+                            .background(Color(0xFFE0F7FA)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh, // Default Material Icon
+                            contentDescription = "Refreshing",
+                            modifier = Modifier
+                                .size(40.dp)
+                                .graphicsLayer { rotationZ = rotationAngle },
+                            tint = Color.Blue
+                        )
+                    }
+                }
             }
-        }
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = Color(0xFFC2FFC7))
         ) {
-            // Add the header as a standalone item
-            item {
-                Header()
-            }
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color(0xFFC2FFC7))
+            ) {
+                // Add the header
+                item { Header() }
 
-            // Add the Top5Section as another item
-            item {
-                Top5Section()
-            }
+                // Add Top 5 Section
+                item { Top5Section() }
 
-            item {
-                Heading()
-            }
+                item{Heading()}
 
-            // Add the list of available food
-            items(availableFoodList) { foodItem ->
-                AvailableFoodCard(foodItem)
+                // Add available food items
+                items(availableFoodList) { foodItem ->
+                    AvailableFoodCard(foodItem)
+                }
             }
         }
-
     }
 }
+
 
 
 @Composable
@@ -276,9 +670,30 @@ fun Header() {
     }
 }
 
-
 @Composable
 fun Top5Section() {
+    val leaderboardUsers = remember { mutableStateListOf<LeaderboardUser>() }
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        try {
+            val response = RetrofitClient.leaderboardApi.getLeaderboard()
+            leaderboardUsers.clear()
+            leaderboardUsers.addAll(response)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(context, "Failed to fetch leaderboard data", Toast.LENGTH_SHORT).show()
+        }
+    }
+    val imageUrls = listOf(
+        "https://cdn.usegalileo.ai/stability/5ff44fdb-6a31-4421-ab15-d4280fee8b3b.png",
+        "https://cdn.usegalileo.ai/stability/54856942-75c2-4cdc-9fe5-dcb15f1c301b.png",
+        "https://cdn.usegalileo.ai/stability/b128d5b1-eded-4af1-b137-fa49cb28a81a.png",
+        "https://cdn.usegalileo.ai/stability/ba184ee3-bcc5-48db-80e7-0b598613b265.png",
+        "https://cdn.usegalileo.ai/stability/8e85a4ee-97a0-48ee-a42f-b708c92a1e40.png"
+    )
+
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -289,7 +704,7 @@ fun Top5Section() {
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Column(
-            modifier = Modifier.padding(8.dp) // Reduced padding inside the card
+            modifier = Modifier.padding(8.dp)
         ) {
             Row(
                 modifier = Modifier
@@ -299,22 +714,13 @@ fun Top5Section() {
             ) {
                 Text(
                     text = "          Names",
-                    style = TextStyle(
-                        fontSize = 14.sp,  // Reduced font size
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black
-                    ),
+                    style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color.Black),
                     modifier = Modifier.weight(2f)
                 )
                 Text(
                     text = "Plates",
-                    style = TextStyle(
-                        fontSize = 14.sp,  // Reduced font size
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black
-                    ),
+                    style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color.Black),
                     modifier = Modifier.weight(1f)
-
                 )
             }
             Divider(
@@ -323,61 +729,52 @@ fun Top5Section() {
                 modifier = Modifier.padding(bottom = 4.dp)
             )
 
-            val topUsers = listOf(
-                Triple("1. Samantha", "https://cdn.usegalileo.ai/stability/5ff44fdb-6a31-4421-ab15-d4280fee8b3b.png", "120"),
-                Triple("2. Alex", "https://cdn.usegalileo.ai/stability/54856942-75c2-4cdc-9fe5-dcb15f1c301b.png", "95"),
-                Triple("3. Emily", "https://cdn.usegalileo.ai/stability/b128d5b1-eded-4af1-b137-fa49cb28a81a.png", "85"),
-                Triple("4. Andrew", "https://cdn.usegalileo.ai/stability/ba184ee3-bcc5-48db-80e7-0b598613b265.png", "70"),
-                Triple("5. Michael", "https://cdn.usegalileo.ai/stability/8e85a4ee-97a0-48ee-a42f-b708c92a1e40.png", "60")
-            )
-
-            topUsers.forEachIndexed { index, (name, imageUrl, plates) ->
+            leaderboardUsers.forEachIndexed { index, user ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 2.dp) // Reduced vertical padding
+                        .padding(vertical = 2.dp)
                         .background(
-                            if (index == 0) Color(0xFFE8F5E9)
-                            else Color.Transparent,
+                            if (index == 0) Color(0xFFE8F5E9) else Color.Transparent,
                             shape = RoundedCornerShape(8.dp)
                         )
-                        .padding(6.dp), // Reduced inner padding for each row
+                        .padding(6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
-                        painter = rememberAsyncImagePainter(model = imageUrl),
-                        contentDescription = name,
+                        painter = rememberAsyncImagePainter(model = imageUrls.getOrElse(index) { "" }), // Dynamically set the image URL based on the index
+                        contentDescription = user.name,
                         modifier = Modifier
-                            .size(32.dp) // Reduced image size
+                            .size(32.dp)
                             .clip(CircleShape)
                             .background(Color.Transparent),
                         contentScale = ContentScale.Crop
                     )
-                    Spacer(modifier = Modifier.width(12.dp)) // Reduced spacing
+                    Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = name,
+                        text = user.name,
                         style = TextStyle(
                             color = if (index == 0) Color(0xFF388E3C) else Color.Black,
-                            fontSize = 12.sp, // Reduced font size
+                            fontSize = 12.sp,
                             fontWeight = if (index == 0) FontWeight.Bold else FontWeight.Normal
                         ),
                         modifier = Modifier.weight(2f)
                     )
                     Text(
-                        text = plates,
+                        text = user.plates.toString(),
                         style = TextStyle(
                             color = if (index == 0) Color(0xFF388E3C) else Color.Black,
-                            fontSize = 12.sp, // Reduced font size
+                            fontSize = 12.sp,
                             fontWeight = if (index == 0) FontWeight.Bold else FontWeight.Normal
                         ),
                         modifier = Modifier.weight(1f)
-
                     )
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun Heading() {

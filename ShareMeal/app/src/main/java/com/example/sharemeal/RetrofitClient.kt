@@ -20,8 +20,16 @@ object RetrofitClient {
     val backendApiService: BackendApiService by lazy {
         retrofit.create(BackendApiService::class.java)
     }
+
+    val foodDonationApi: FoodDonationApi by lazy {
+        retrofit.create(FoodDonationApi::class.java)
+    }
+
     val availableFoodApi: AvailableFoodApi by lazy {
         retrofit.create(AvailableFoodApi::class.java)
     }
 
+    val leaderboardApi: LeaderboardApi by lazy {
+        retrofit.create(LeaderboardApi::class.java)
+    }
 }
