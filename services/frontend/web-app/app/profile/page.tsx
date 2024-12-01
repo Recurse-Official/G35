@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { BACKEND_URL } from "@/constants";
-import "./profile_style.css"
+import "./profile_style.css";
 
 interface UserDetails {
   id: number;
@@ -57,9 +57,24 @@ interface DonationModel {
   status: string;
 }
 
+interface UserStats {
+  user_id: number;
+  total_donations: number;
+  total_servings_donated: number;
+  total_orders: number;
+  total_servings_ordered: number;
+}
+
 async function getUserByEmail(email: string) {
   const response = await axios.get(`${BACKEND_URL}/users/id/`, {
     params: { email: email },
+  });
+  return response.data;
+}
+
+async function getUserStats(userId: number) {
+  const response = await axios.get(`${BACKEND_URL}/users/stats/`, {
+    params: { user_id: userId },
   });
   return response.data;
 }
@@ -80,12 +95,24 @@ async function getUserOrders(userId: number) {
 
 export default function ProfilePage() {
   const [user, setUser] = useState({} as UserDetails);
+  const [userStats, setUserStats] = useState({} as UserStats);
   const email = localStorage.getItem("user_email");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [donations, setDonations] = useState<DonationModel[]>([]);
   const [orders, setOrders] = useState<OrderModel[]>([]);
   const [activeTab, setActiveTab] = useState<"orders" | "donations">("orders");
+
+  // Logout handler
+  const handleLogout = () => {
+    localStorage.removeItem("loggedIn");
+    window.localStorage.removeItem("user_id");
+    window.localStorage.removeItem("username");
+    window.localStorage.removeItem("phone");
+    window.localStorage.removeItem("full_name");
+    window.localStorage.removeItem("status");
+    window.location.href = "/login";
+  };
 
   // Fetch user data based on the email
   useEffect(() => {
@@ -102,7 +129,34 @@ export default function ProfilePage() {
         });
     }
   }, [email]);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+        const isLoggedIn = localStorage.getItem("loggedIn");
 
+        if (!isLoggedIn) {
+            const currentPath = window.location.pathname;
+            if (currentPath !== "/login" && currentPath !== "/signup") {
+                window.location.href = "/login";
+            }
+        }
+    }
+}, []);
+
+  // Fetch user stats after user data is loaded
+  useEffect(() => {
+    const user_id = user.id;
+    if (user_id) {
+      getUserStats(user_id)
+        .then((stats) => {
+          setUserStats(stats);
+        })
+        .catch(() => {
+          setError(true);
+        });
+    }
+  }, [user]);
+
+  // Fetch user donations and orders
   useEffect(() => {
     const user_id = user.id;
     if (user_id) {
@@ -135,7 +189,12 @@ export default function ProfilePage() {
 
   return (
     <div className="profile-page">
-      <h1>{user.full_name}</h1>
+      <div className="header">
+        <h1>{user.full_name}</h1>
+        <button className="logout-button" onClick={handleLogout}>
+          Logout
+        </button>
+      </div>
       <div className="profile-info">
         <div className="profile-detail">
           <strong>Email:</strong> {user.email}
@@ -154,6 +213,24 @@ export default function ProfilePage() {
           {new Date(user.created_at).toLocaleDateString()}
         </div>
       </div>
+
+      {/* Stats and Data Section */}
+      <div className="user-stats">
+        <div className="stat-item">
+          <strong>Total Donations:</strong> {userStats.total_donations}
+        </div>
+        <div className="stat-item">
+          <strong>Total Servings Donated:</strong> {userStats.total_servings_donated}
+        </div>
+        <br />
+        <div className="stat-item">
+          <strong>Total Orders:</strong> {userStats.total_orders}
+        </div>
+        <div className="stat-item">
+          <strong>Total Servings Ordered:</strong> {userStats.total_servings_ordered}
+        </div>
+      </div>
+
       <div className="data-section">
         <div className="tabs">
           <div

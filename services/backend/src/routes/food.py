@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func, and_
-from src.utils import get_db_session, Available_Food, Session, Address, User_Statistics
+from src.utils import get_db_session, Available_Food, Session, Address, User_Statistics, get_coords_from_address
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 import logging
 from src.routes.address import create_address, AddressModel
+from src.routes.orders import create_order, OrderModel
 from datetime import datetime
 
 # all these are routes under /food
@@ -28,6 +29,18 @@ class FoodModel(BaseModel):
     latitude: Optional[float]
     longitude: Optional[float]
 
+class ImmediateModel(BaseModel):
+    user_id: int
+    address_1: str
+    address_2: Optional[str]
+    city: str
+    state: str
+    country: str
+    postal_code: str
+    num_servings: int
+    latitude: Optional[float]
+    longitude: Optional[float]
+
 @routes.get("/")
 def root():
     return {"message": "Hello, World!"}
@@ -36,7 +49,7 @@ def root():
 def get_near_food(
     lat: float = 17.3967144,
     long: float = 78.4898198,
-    radius_km: int = 10
+    radius_km: int = 1000
 ):
     session = get_db_session()
     distance_formula = (
@@ -69,7 +82,6 @@ def get_near_food(
         )
         .order_by("expiration_date")
         .order_by("distance")
-        .limit(10)
         .all()
     )
 
@@ -141,9 +153,66 @@ def add_food(
             "message": str(e)
         }
 
-@routes.get("/get/{id}")
+@routes.get("/get/")
 def get_food(id: int):
     session = get_db_session()
     food = session.query(Available_Food).where(Available_Food.id == id).first()
 
     return food
+
+@routes.post("/immediate")
+def get_immediate(immediate: ImmediateModel):
+    session = get_db_session()
+
+    lat = immediate.latitude
+    long = immediate.longitude
+
+    immediate_food = (
+        session.query(
+            Available_Food.id,
+            Available_Food.num_servings_left,
+            Available_Food.prepared_date,
+            Available_Food.expiration_date,
+            Available_Food.status,
+            Available_Food.address_id,
+            func.acos(
+                func.cos(func.radians(lat)) * func.cos(func.radians(Address.latitude)) *
+                func.cos(func.radians(Address.longitude) - func.radians(long)) +
+                func.sin(func.radians(lat)) * func.sin(func.radians(Address.latitude))
+            ).label("distance")
+        )
+        .join(Address, Available_Food.address_id == Address.id)
+        .filter(
+            and_(
+                Available_Food.status == "available",
+                Available_Food.num_servings_left >= immediate.num_servings
+            )
+        )
+        .order_by("distance")
+        .limit(1)
+        .all()
+    )
+
+    address = AddressModel(
+        address_1=immediate.address_1,
+        address_2=immediate.address_2,
+        city=immediate.city,
+        state=immediate.state,
+        country=immediate.country,
+        postal_code=immediate.postal_code,
+        latitude=immediate.latitude,
+        longitude=immediate.longitude
+    )
+    address_id = create_address(address)["address"].id
+
+    order = OrderModel(
+        user_id=immediate.user_id,
+        food_available_id=immediate_food[0].id,
+        num_servings=immediate.num_servings,
+        address_id=immediate_food[0].address_id,
+        delivery_address_id=address_id,
+        status="pending"
+    )
+
+    return create_order(order)
+    

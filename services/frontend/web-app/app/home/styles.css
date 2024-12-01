@@ -31,7 +31,7 @@
     color: #000; /* Green text */
     font-weight: bold;
     text-align: center; /* Left align text in table */
-    font-size: 18px;
+    font-size: 20px;
 }
 
 .td {
@@ -40,7 +40,7 @@
     padding: 10px;
     text-align: center; /* Left align table data */
     color: #333;
-    font-size: 16px;
+    font-size: 24px;
 }
 
 .row:hover {

@@ -32,6 +32,18 @@ export default function DonatePage() {
             setLongitude(position.coords.longitude);
         });
     }, []);
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const isLoggedIn = localStorage.getItem("loggedIn");
+
+            if (!isLoggedIn) {
+                const currentPath = window.location.pathname;
+                if (currentPath !== "/login" && currentPath !== "/signup") {
+                    window.location.href = "/login";
+                }
+            }
+        }
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -46,23 +58,14 @@ export default function DonatePage() {
                 latitude,
                 longitude,
             });
-            setStatusMessage(`Donation successful: ${response.data.status}`);
-            setFormData({
-                food_type: "Veg",
-                food_title: "",
-                food_available: "",
-                num_servings: 0,
-                prepared_date: "",
-                expiration_date: "",
-                address_1: "",
-                address_2: "",
-                city: "",
-                state: "",
-                country: "",
-                postal_code: "",
-            });
+            if (response.status == 200) {
+                alert("Food donated successfully");
+                window.location.href = "/home";
+            } else {
+                alert("Error donating food, please try again");
+            }
         } catch (error) {
-            setStatusMessage(`Error: ${error || "Failed to donate food"}`);
+            alert("Error donating food, please try again");
         }
     };
 

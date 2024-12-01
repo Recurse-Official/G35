@@ -15,7 +15,8 @@ export default function FindFood() {
             const { latitude, longitude } = position.coords;
 
             // Fetch nearby available food once location is set
-            fetch(`${BACKEND_URL}/food/nearby?lat=${latitude}&long=${longitude}&radius_km=${RADIUS_KM}`)
+            fetch(`${BACKEND_URL}/food/nearby`)
+            // ?lat=${latitude}&long=${longitude}&radius_km=${RADIUS_KM}
                 .then((response) => response.json())
                 .then((data) => setResults(data as FoodTileProps[]))
                 .catch((error) => console.error("Error fetching food data:", error));
