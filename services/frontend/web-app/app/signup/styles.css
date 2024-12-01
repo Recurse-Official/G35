@@ -1,71 +1,105 @@
+/* Container and Title */
 .signup-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
     padding: 20px;
-    max-width: 400px;
-    margin: 0 auto;
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
 }
 
 .title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-align: center;
+    font-size: 2rem;
+    color: #2f8f46;
     margin-bottom: 20px;
 }
 
+/* Form Styles */
 .form-container {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    width: 100%;
+    max-width: 400px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
 }
 
 .input-container {
-    display: flex;
-    flex-direction: column;
+    margin-bottom: 15px;
 }
 
-.input-container label {
+label {
     font-size: 14px;
+    color: #333;
     margin-bottom: 5px;
+    display: block;
 }
 
-.input-container input {
+.text-input {
+    width: 100%;
     padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
     font-size: 14px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    color: #333;
+    box-sizing: border-box;
+    background-color: #fff;
 }
 
-button {
-    padding: 10px;
-    font-size: 16px;
+/* Buttons */
+.signup-button {
+    width: 100%;
     background-color: #2f8f46;
     color: #fff;
+    padding: 10px;
+    font-size: 16px;
     border: none;
-    border-radius: 8px;
+    border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    margin-top: 10px;
 }
 
-button:hover {
+.signup-button:hover {
     background-color: #237a35;
 }
 
+/* Status Message */
 .status-message {
     margin-top: 15px;
+    font-size: 14px;
     padding: 10px;
-    text-align: center;
-    border-radius: 8px;
+    border-radius: 4px;
 }
 
 .status-message.success {
-    background-color: #d4edda;
-    color: #155724;
+    background-color: #eaf7e6;
+    color: #2f8f46;
 }
 
 .status-message.error {
-    background-color: #f8d7da;
-    color: #721c24;
+    background-color: #fce8e6;
+    color: #d93025;
+}
+
+/* Reverse Link */
+.login-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 16px;
+    color: #000;
+}
+
+.login-link-text {
+    color: #2f8f46;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.login-link-text:hover {
+    color: #237a35;
+    text-decoration: underline;
 }

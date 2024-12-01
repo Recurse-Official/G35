@@ -70,6 +70,12 @@ export default function LoginPage() {
                 </button>
                 {statusMessage && <p className="status-message">{statusMessage}</p>}
             </div>
+            <p className="signup-link">
+                Don&apos;t have an account?{" "}
+                <a href="/signup" className="signup-link-text">
+                    Sign up
+                </a>
+            </p>
         </div>
     );
 }

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { BACKEND_URL } from "@/constants";
-import "./styles.css"; // Assume you have a CSS file for styling
+import "./styles.css";
 
 export default function SignUpPage() {
     const [formData, setFormData] = useState({
@@ -65,6 +65,7 @@ export default function SignUpPage() {
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
+                        className="text-input"
                         required
                     />
                 </div>
@@ -75,6 +76,7 @@ export default function SignUpPage() {
                         name="password"
                         value={formData.password}
                         onChange={handleChange}
+                        className="text-input"
                         required
                     />
                 </div>
@@ -85,10 +87,13 @@ export default function SignUpPage() {
                         name="confirmPassword"
                         value={formData.confirmPassword}
                         onChange={handleChange}
+                        className="text-input"
                         required
                     />
                 </div>
-                <button type="submit">Sign Up</button>
+                <button type="submit" className="signup-button">
+                    Sign Up
+                </button>
             </form>
 
             {statusMessage && (
@@ -96,6 +101,13 @@ export default function SignUpPage() {
                     {statusMessage}
                 </div>
             )}
+
+            <p className="login-link">
+                Already have an account?{" "}
+                <a href="/login" className="login-link-text">
+                    Log in
+                </a>
+            </p>
         </div>
     );
 }
