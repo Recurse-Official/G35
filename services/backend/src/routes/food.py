@@ -188,7 +188,7 @@ def get_immediate(immediate: ImmediateModel):
                 Available_Food.num_servings_left >= immediate.num_servings
             )
         )
-        .order_by("distance")
+        .order_by("expiration_date", "distance")
         .limit(1)
         .all()
     )

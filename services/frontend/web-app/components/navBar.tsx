@@ -11,7 +11,7 @@ export function NavBar() {
       </div>
       {isLoggedIn ? <div>
         <div className="sidebar-item">
-          <Link href="/immediate">Immediate Need</Link>
+          <Link href="/immediate">Immediate Help</Link>
         </div>
         <div className="sidebar-item">
           <Link href="/find">Find Food</Link>

@@ -61,17 +61,17 @@ const AnalyticsPage: React.FC = () => {
     datasets: [
       {
         label: "Donations (kg)",
-        data: [200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400],
+        data: [200, 400, 500, 500, 700, 600, 500, 600, 800, 1000, 400, 700],
         backgroundColor: "#42a5f5",
       },
     ],
   };
 
   const pieData = {
-    labels: ["Individuals", "Corporates", "Nonprofits"],
+    labels: ["Individuals", "Restaurants", "Nonprofits"],
     datasets: [
       {
-        data: [50, 30, 20],
+        data: [20, 30, 50],
         backgroundColor: ["#ff6384", "#ffcd56", "#36a2eb"],
       },
     ],
@@ -95,7 +95,7 @@ const AnalyticsPage: React.FC = () => {
     datasets: [
       {
         label: "Food Saved (kg)",
-        data: [100, 200, 300, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000],
+        data: [200, 400, 500, 500, 700, 600, 500, 600, 800, 1000, 400, 700],
         borderColor: "#8e44ad",
         backgroundColor: "rgba(142, 68, 173, 0.2)",
         borderWidth: 2,
