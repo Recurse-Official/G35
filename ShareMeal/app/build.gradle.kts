@@ -85,6 +85,8 @@ dependencies {
     implementation ("io.ktor:ktor-client-json:2.1.0")
     implementation ("io.ktor:ktor-client-serialization:2.1.0")
     implementation ("com.google.accompanist:accompanist-swiperefresh:0.36.0")
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
+
 
 
 

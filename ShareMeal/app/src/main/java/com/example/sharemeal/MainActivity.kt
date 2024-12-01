@@ -12,7 +12,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
@@ -184,15 +183,18 @@ sealed class NavigationItem(val route: String, val icon: ImageVector, val title:
 }
 @Composable
 fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifier) {
-    NavHost(navController, startDestination = NavigationItem.Leaderboard.route, modifier = modifier) {
+    NavHost(navController, startDestination = "login", modifier = modifier) {
         composable(NavigationItem.Leaderboard.route) { LeaderboardScreen(navController) }
         composable(NavigationItem.Donate.route) { DonatePage(navController) }
         composable(NavigationItem.Profile.route) { ProfilePage() }
         composable("home") { LeaderboardScreen(navController) } // Add HomeScreen here
         composable("login") { LoginScreen(navController) }
         composable("registration") { RegistrationScreen(navController) }
+
     }
 }
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -477,43 +479,49 @@ fun DonatePage(navController: NavHostController) {
                                 println("Type of user_id: ${1::class.simpleName}") // Replace `1` with actual user_id logic
 
                                 // Create the donation object with form data
-                            val donation = FoodDonation(
-                                user_id = 1, // Assuming user_id is 1 or dynamically fetched based on the logged-in user
-                                food_type = foodType,
-                                food_title = foodTitle,
-                                food_available = foodAvailable,
-                                num_servings = servingsInt,
-                                prepared_date = preparedDate,
-                                expiration_date = expirationDate,
-                                address_1 = addressLine1,
-                                address_2 = addressLine2,
-                                city = city,
-                                state = state,
-                                country = country,
-                                postal_code = postalCode,
-                                latitude = 17.453001,
-                                longitude = 78.395264
-                            )
+                            val user = getUserDataFromLocal(context)
+
+                            val donation =
+                                    FoodDonation(
+                                        user_id = user.first, // Assuming user_id is 1 or dynamically fetched based on the logged-in user
+                                        food_type = foodType,
+                                        food_title = foodTitle,
+                                        food_available = foodAvailable,
+                                        num_servings = servingsInt,
+                                        prepared_date = preparedDate,
+                                        expiration_date = expirationDate,
+                                        address_1 = addressLine1,
+                                        address_2 = addressLine2,
+                                        city = city,
+                                        state = state,
+                                        country = country,
+                                        postal_code = postalCode,
+                                        latitude = 17.453001,
+                                        longitude = 78.395264
+                                    )
+
                             val gson = Gson()
                             val jsonPayload = gson.toJson(donation)
                             println("Payload: $jsonPayload")
 
 
                             // Submit the donation using the Retrofit API
-                            addDonation(donation, onSuccess = {
-                                // Handle success (e.g., show a success message or navigate to another screen)
-                                navController.navigate("home") {
-                                    popUpTo("donate") { inclusive = true } // Clear DonatePage from backstack
-                                }
-                                Toast.makeText(context, "Donation added successfully!", Toast.LENGTH_SHORT).show()
-                                println("Donation added successfully!")
 
-                            }, onError = { errorMessage ->
-                                // Handle error (e.g., show an error message)
-                                println("Error: $errorMessage")
-                                Toast.makeText(context, "Error: $errorMessage", Toast.LENGTH_SHORT).show()
+                                addDonation(donation, onSuccess = {
+                                    // Handle success (e.g., show a success message or navigate to another screen)
+                                    navController.navigate("home") {
+                                        popUpTo("donate") { inclusive = true } // Clear DonatePage from backstack
+                                    }
+                                    Toast.makeText(context, "Donation added successfully!", Toast.LENGTH_SHORT).show()
+                                    println("Donation added successfully!")
 
-                            })
+                                }, onError = { errorMessage ->
+                                    // Handle error (e.g., show an error message)
+                                    println("Error: $errorMessage")
+                                    Toast.makeText(context, "Error: $errorMessage", Toast.LENGTH_SHORT).show()
+
+                                })
+
                         }
                     },
                     modifier = Modifier
@@ -630,7 +638,7 @@ fun LeaderboardScreen(navController: NavController) {
 
                 // Add available food items
                 items(availableFoodList) { foodItem ->
-                    AvailableFoodCard(foodItem)
+                    AvailableFoodCard(foodItem, availableFoods = availableFoodList)
                 }
             }
         }
@@ -641,21 +649,25 @@ fun LeaderboardScreen(navController: NavController) {
 
 @Composable
 fun Header() {
+    var context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally // Center content horizontally in the Column
     ) {
-        Text(
-            text = "Hi Saiteja!",
-            style = TextStyle(
-                color = Color(0xFF526E48),
-                fontSize = 34.sp,
-                fontWeight = FontWeight.Bold
-            ),
-            modifier = Modifier.align(Alignment.Start).padding(top = 10.dp) // Space above the title
-        )
+        val user = getUserDataFromLocal(context)
+        if (user != null) {
+            Text(
+                text = "Hi ${user.second}!",
+                style = TextStyle(
+                    color = Color(0xFF526E48),
+                    fontSize = 34.sp,
+                    fontWeight = FontWeight.Bold
+                ),
+                modifier = Modifier.align(Alignment.Start).padding(top = 10.dp) // Space above the title
+            )
+        }
         Spacer(modifier = Modifier.height(20.dp))
         // Leaderboard title below the profile row
         Text(
@@ -797,79 +809,315 @@ fun Heading() {
 
 
 
+
 @Composable
-fun AvailableFoodCard(food: AvailableFood) {
+fun AvailableFoodCard(food: AvailableFood,availableFoods: List<AvailableFood>) {
+    var showDetail by remember { mutableStateOf(false) }
+    var servings by remember { mutableStateOf("") }
+    var addressLine1 by remember { mutableStateOf("") }
+    var addressLine2 by remember { mutableStateOf("") }
+    var city by remember { mutableStateOf("") }
+    var state by remember { mutableStateOf("") }
+    var country by remember { mutableStateOf("") }
+    var postalCode by remember { mutableStateOf("") }
+//    val userId =  1// You can get this from your logged-in user's data
+//    val foodAvailableId = food.food_available_id // Use the ID from the food object
+    val addressId = 1 // Replace with actual address ID if available
+    val status = "Pending" // Set a default status if needed
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp, horizontal = 14.dp),
+            .padding(vertical = 8.dp, horizontal = 14.dp)
+            .clickable { showDetail = !showDetail },  // Toggle expansion on click
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         shape = RoundedCornerShape(16.dp)
     ) {
-        Row(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            // Left Column (Text and Description)
+        // If the card is expanded, display in a column, else in a row.
+        if (showDetail) {
+            // Expanded View
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
             ) {
+                // Image Section (Moved to the top and expanded)
+                Image(
+                    painter = painterResource(id = R.drawable.loginpage), // Replace with actual image
+                    contentDescription = "Food image",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(300.dp) // Image height when expanded
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(Color.Gray) // Placeholder background color
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Food details below the image
                 Text(
                     text = food.food_title,
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Description: ",
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold) // Bold the heading
-                )
-                Text(text = food.food_available)
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Prepared Date
+                Text(text = "Description: ${food.food_available}")
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "Prepared Date: ${food.prepared_date ?: "Not available"}")
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "Expiration Date: ${food.expiration_date ?: "Not available"}")
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "Distance: ${String.format("%.2f", food.distance)} km")
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Prepared Date: ",
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                    text = "Number of Servings: ${food.num_servings}",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
                 )
-                Text(text = food.prepared_date ?: "Not available")
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Expiration Date
-                Text(
-                    text = "Expiration Date: ",
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                TextField(
+                    value = servings,
+                    onValueChange = { servings = it },
+                    label = { Text("Enter number of servings") },
+                    modifier = Modifier.fillMaxWidth()
                 )
-                Text(text = food.expiration_date ?: "Not available")
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Distance
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()  // Take the full width
+                        .padding(bottom = 16.dp, top = 16.dp)
+                ) {
+                    Text(
+                        text = "Address",
+                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                        modifier = Modifier.align(Alignment.TopStart) // Align to the top-left corner
+                    )
+                }
+                    Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Distance: ${String.format("%.2f", food.distance)} km", // Correct string interpolation
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                    text = "Address Line 1",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                )
+                TextField(
+                    value = addressLine1,
+                    onValueChange = { addressLine1 = it },
+                    label = { Text("Address Line 1") },
+                    modifier = Modifier.fillMaxWidth().background(Color.White),
+
+                    )
+            }
+                // Address Line 2
+                Text(
+                    text = "Address Line 2",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                )
+                TextField(
+                    value = addressLine2,
+                    onValueChange = { addressLine2 = it },
+                    label = { Text("Address Line 2") },
+                    modifier = Modifier.fillMaxWidth()
                 )
 
+                // City
+                Text(
+                    text = "City",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                )
+                TextField(
+                    value = city,
+                    onValueChange = { city = it },
+                    label = { Text("City") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                // State
+                Text(
+                    text = "State",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                )
+                TextField(
+                    value = state,
+                    onValueChange = { state = it },
+                    label = { Text("State") },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-                // Distance value with 2 decimal places
-//                Text(
-//                    text = String.format("%.2f", food.distance) + " km", // Format to 2 decimal places
-//                    style = MaterialTheme.typography.bodyMedium
-//                )
+                // Country
+                Text(
+                    text = "Country",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                )
+                TextField(
+                    value = country,
+                    onValueChange = { country = it },
+                    label = { Text("Country") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                // Postal Code
+                Text(
+                    text = "Postal code",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                )
+                TextField(
+                    value = postalCode,
+                    onValueChange = { postalCode = it },
+                    label = { Text("Postal Code") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            Spacer(modifier = Modifier.height(8.dp))
+
+                // Create the FoodOrderRequest object
+            val selectedFood = availableFoods.firstOrNull() // Or some logic to select the food item
+
+            Button(
+                onClick = {
+                    coroutineScope.launch {
+                        val user = getUserDataFromLocal(context)
+
+                        val order = selectedFood?.let {
+                                FoodOrderRequest(
+                                    user_id = user.first,
+                                    food_available_id = it.id,
+                                    num_servings = servings.toIntOrNull() ?: 1, // Default servings if empty
+                                    address_id = it.address_id,
+                                    status = status,
+                                    address_1 = addressLine1,
+                                    address_2 = addressLine2,
+                                    city = city,
+                                    state = state,
+                                    country = country,
+                                    postal_code = postalCode,
+                                    latitude = 17.453110, // Set based on user's location if needed
+                                    longitude = 78.394529 // Set based on user's location if needed
+                                )
+                        }
+
+                        // Launch a coroutine for the suspend function
+
+                        try {
+                            if (order != null) {
+                                submitFoodOrder(
+                                    order,
+                                    onSuccess = {
+                                        // Handle success (e.g., show a toast or navigate to another screen)
+                                        Toast.makeText(
+                                            context,
+                                            "Order successfully placed!",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    },
+                                    onError = { errorMessage ->
+                                        // Handle error (e.g., show a toast with error message)
+                                        Toast.makeText(
+                                            context,
+                                            "Error: $errorMessage",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                )
+                            }
+                        } catch (e: Exception) {
+                            // Handle any exceptions (e.g., network errors)
+                            Toast.makeText(
+                                context,
+                                "Exception: ${e.localizedMessage}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                },
+
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Order Now")
             }
 
 
-            // Right Column (Image placeholder for now)
-            Image(
-                painter = painterResource(id = R.drawable.loginpage),  // Use a placeholder image
-                contentDescription = "Food image",
+
+            }
+         else {
+            // Collapsed View (Row layout with the image on the right and details on the left)
+            Row(
                 modifier = Modifier
-                    .size(100.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Color.Gray) // Placeholder background color
-            )
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                // Left Column (Text and Description)
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = food.food_title,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Description: ",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                    )
+                    Text(text = food.food_available)
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Prepared Date
+                    Text(
+                        text = "Prepared Date: ",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                    )
+                    Text(text = food.prepared_date ?: "Not available")
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Expiration Date
+                    Text(
+                        text = "Expiration Date: ",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                    )
+                    Text(text = food.expiration_date ?: "Not available")
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Distance
+                    Text(
+                        text = "Distance: ${String.format("%.2f", food.distance)} km",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                    )
+                }
+
+                // Right Column (Image placeholder for now)
+                Image(
+                    painter = painterResource(id = R.drawable.loginpage),  // Use a placeholder image
+                    contentDescription = "Food image",
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(Color.Gray) // Placeholder background color
+                )
+            }
         }
     }
 }
+
+
+fun getUserDataFromLocal(context: Context): Pair<Int, String?> {
+    val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+
+    val id = prefs.getInt("id", -1) // Default value is -1 if not found
+    val fullName = prefs.getString("full_name", "")
+
+    // Check if any of the required fields are invalid, then return null
+        return Pair(id, fullName)
+}
+
 
 
 
@@ -894,66 +1142,12 @@ fun saveUserDataToLocal(context: Context, user: UserResponse) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(navController: NavController) {
-    val auth = FirebaseAuth.getInstance() // FirebaseAuth instance
-    val firestore = FirebaseFirestore.getInstance() // Firestore instance
-    val context = LocalContext.current
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
+    var context = LocalContext.current
 
-    // Google Sign-In setup
-    val googleSignInClient = GoogleSignIn.getClient(
-        context,
-        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("1074130231273-0e9tclp3s8t2dn9rfgrp4e071l79bls4.apps.googleusercontent.com") // Replace with your client ID
-            .requestEmail()
-            .build()
-    )
 
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-        try {
-            val account = task.getResult(ApiException::class.java)
-            if (account != null) {
-                val email = account.email
-                val displayName = account.displayName
-
-                if (email != null) {
-                    // Check if the user exists in Firestore
-                    val userQuery = firestore.collection("users").whereEqualTo("email", email)
-                    userQuery.get().addOnSuccessListener { querySnapshot ->
-                        if (querySnapshot.documents.isNotEmpty()) {
-                            // User exists
-                            Toast.makeText(
-                                context,
-                                "Google Login successful!",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            navController.navigate("leaderboard")
-                        } else {
-                            // User does not exist
-                            Toast.makeText(
-                                context,
-                                "User does not exist in Firebase. Please sign up.",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            navController.navigate("registration")
-                        }
-                    }.addOnFailureListener { exception ->
-                        Toast.makeText(
-                            context,
-                            "Error checking user existence: ${exception.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-            }
-        } catch (e: ApiException) {
-            Log.e("GoogleSignIn", "Sign-in failed: ${e.message}")
-            Toast.makeText(context, "Sign-in failed: ${e.message}", Toast.LENGTH_SHORT).show()
-        }
-    }
 
 
     Column(
@@ -1035,47 +1229,34 @@ fun LoginScreen(navController: NavController) {
             Button(
                 onClick = {
                     val normalizedEmail = email.trim().lowercase()
-
+                    if (!email.matches(emailPattern.toRegex())) {
+                        Toast.makeText(context, "Please enter a valid email", Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
+                    if (password.length < 6) {
+                        Toast.makeText(context, "Password must be at least 6 characters long", Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
                     // 1. Check for empty fields
                     if (normalizedEmail.isBlank() || password.isBlank()) {
                         Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()
                         return@Button
                     }
-
-                    // 2. Login using Firebase Authentication with email and password
-                    auth.signInWithEmailAndPassword(normalizedEmail, password)
-                        .addOnCompleteListener { loginTask ->
-                            if (loginTask.isSuccessful) {
-                                Toast.makeText(
-                                    context,
-                                    "Login successful!",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-
-                                // Call fetchUserDetails directly with the correct parameters
-                                fetchUserDetails(
-                                    email = normalizedEmail,
-                                    onSuccess = { user ->
-                                        // Save user locally or update UI
-                                        saveUserDataToLocal(context, user)
-                                        Log.d("Login", "User fetched successfully: $user")
-
-                                        // Show a toast with user's name or email for confirmation
-                                        val welcomeMessage = "Welcome ${user.full_name ?: user.email}!\n" +
-                                                "Phone: ${user.phone ?: "Not provided"}"
-                                        Toast.makeText(context, welcomeMessage, Toast.LENGTH_LONG).show()
-                                        navController.navigate("leaderboard")
-                                    },
-                                    onError = { errorMessage ->
-                                        Log.d("login","$errorMessage")
-                                        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-                                    }
-                                )
-                            } else {
-                                // Handle login failure
-                                Toast.makeText(context, "Login failed!", Toast.LENGTH_SHORT).show()
-                            }
+                    loginUser(
+                        email = normalizedEmail,
+                        password = password,
+                        onSuccess = { userResponse ->
+                            // Assuming email is available in the response, you can show it
+                            saveUserDataToLocal(context,user = userResponse)
+                            Toast.makeText(context, "Welcome ${userResponse.full_name}!", Toast.LENGTH_SHORT).show()
+                            navController.navigate("home")
+                        },
+                        onError = { errorMessage ->
+                            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                         }
+                    )
+
+
 
                 },
                 modifier = Modifier
@@ -1097,21 +1278,6 @@ fun LoginScreen(navController: NavController) {
                 Text(text = "OR", modifier = Modifier.padding(horizontal = 8.dp), color = Color.Gray)
                 Divider(modifier = Modifier.weight(1f), color = Color.Gray)
             }
-            AndroidView(
-                factory = { context ->
-                    com.google.android.gms.common.SignInButton(context).apply {
-                        setSize(com.google.android.gms.common.SignInButton.SIZE_WIDE)
-                        setOnClickListener {
-                            googleSignInClient.signOut().addOnCompleteListener {
-                                launcher.launch(googleSignInClient.signInIntent)
-                            }
-                        }
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-            )// Match height with other buttons            )
 
 
         }

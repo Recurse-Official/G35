@@ -10,6 +10,7 @@ data class AvailableFood(
     val prepared_date: String?,
     val expiration_date: String?,
     val status: String?,
+    val address_id:Int,
     val distance: Double // Added 'distance' field
 )
 

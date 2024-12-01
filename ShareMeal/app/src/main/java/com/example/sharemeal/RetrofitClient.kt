@@ -32,4 +32,11 @@ object RetrofitClient {
     val leaderboardApi: LeaderboardApi by lazy {
         retrofit.create(LeaderboardApi::class.java)
     }
+    val foodOrderRequestApi: FoodOrderRequestApi by lazy {
+        retrofit.create(FoodOrderRequestApi::class.java)
+    }
+
+    val loginUserApi: LoginUserApi by lazy {
+        retrofit.create(LoginUserApi::class.java)
+    }
 }
