@@ -3,12 +3,13 @@ import Link from "next/link";
 import "./styles/navBar.css";
 
 export function NavBar() {
+  const isLoggedIn = localStorage.getItem("loggedIn");
   return (
     <nav className="navbar">
       <div className="navbar-brand">
         <Link className="navbar-brand" href="/home">ShareMeal</Link>
       </div>
-      <div>
+      {isLoggedIn ? <div>
         <div className="sidebar-item">
           <Link href="/immediate">Immediate Need</Link>
         </div>
@@ -21,7 +22,7 @@ export function NavBar() {
         <div className="sidebar-item">
           <Link href="/profile">Profile</Link>
         </div>
-      </div>
+      </div> : <div></div>}
     </nav>
   );
 }
